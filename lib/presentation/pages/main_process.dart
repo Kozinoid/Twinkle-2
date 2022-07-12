@@ -17,9 +17,9 @@ class MainProcess extends StatelessWidget {
   Widget build(BuildContext context) {
     ModeCubit cubit = context.read<ModeCubit>();//BlocProvider.of<ModeBloc>(context);
 
-    return Consumer<Map<String, dynamic>?>(
+    return Consumer<TwinkleDataModel>(
       builder:(context, data, child) {
-        AppServiceData serviceData = AppServiceData.fromJson(data!);
+        //AppServiceData serviceData = AppServiceData.fromJson(data!);
         return WillPopScope(
           onWillPop: ()async{
             return await showConfirmDialog(context, title: 'Do you really want to exit?');
@@ -36,7 +36,7 @@ class MainProcess extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.all(20.0),
                       child: Text(
-                          'You can smoke after ${serviceData.data.started} minutes',
+                          'You can smoke after 45 minutes',
                           textAlign: TextAlign.center,
                           style: Utils.getWhiteOnOrangeStyle(size: 32)),
                     ),
