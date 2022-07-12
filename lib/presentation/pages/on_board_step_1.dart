@@ -15,7 +15,7 @@ class TwinkleOnBoardOne extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ModeBloc bloc = context.read<ModeBloc>();//BlocProvider.of<ModeBloc>(context);
+    ModeCubit bloc = context.read<ModeCubit>();//BlocProvider.of<ModeBloc>(context);
     return Consumer<TwinkleDataModel>(
       builder: (context, data, child){
         return WillPopScope(

@@ -1,3 +1,4 @@
+import 'package:android_long_task/long_task/app_client.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:twinkle/presentation/cubit/mode_cubit.dart';
@@ -14,7 +15,7 @@ class TwinkleSettings extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ModeBloc bloc = context.read<ModeBloc>();//BlocProvider.of<ModeBloc>(context);
+    ModeCubit bloc = context.read<ModeCubit>();//BlocProvider.of<ModeBloc>(context);
     return Consumer<TwinkleDataModel>(
       builder:(context, data, child){
         return WillPopScope(
@@ -89,8 +90,11 @@ class TwinkleSettings extends StatelessWidget {
             persistentFooterButtons: [
               TwinkleButton(text: 'clear all data', selected: true, size: 24, width: 250, onPressed: () async {
                 bool result = await showConfirmDialog(context, title: 'Do you really want to clear all data?');
-                print('result = $result');
-                if (result) bloc.resetData();
+                //print('result = $result');
+                if (result) {
+                  AppClient.stopService();
+                  bloc.resetData();
+                }
               },),
             ],
           ),

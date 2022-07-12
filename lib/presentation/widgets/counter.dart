@@ -18,7 +18,7 @@ class TwinkleCounter extends StatelessWidget {
     return Container(
       width: width,
       color: Utils.YELLOW_COLOR,
-      margin: EdgeInsets.symmetric(vertical: 20),
+      margin: const EdgeInsets.symmetric(vertical: 20),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [

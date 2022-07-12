@@ -15,7 +15,7 @@ class TwinkleDataModel extends UserData{
       started = json['started'];
       extraCigarettesCount = json['extraCigarettesCount'];
       String timeString = json['firstCigaretteTime']; // ??
-      print('timeString: $timeString');
+      //print('timeString: $timeString');
       firstCigaretteTime = DateTime.parse(timeString);
   }
 

@@ -9,10 +9,10 @@ class TwinkleAchivements extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ModeBloc bloc = context.read<ModeBloc>();
+    ModeCubit cubit = context.read<ModeCubit>();
     return WillPopScope(
       onWillPop: () async {
-        bloc.toMainScreen();
+        cubit.toMainScreen();
         return false;
       },
       child: Scaffold(
@@ -20,7 +20,7 @@ class TwinkleAchivements extends StatelessWidget {
           leading: BackButton(
             color: Utils.WHITE_COLOR,
             onPressed: () {
-              bloc.toMainScreen();
+              cubit.toMainScreen();
             },
           ),
           backgroundColor: Utils.DARK_BLUE_COLOR,
@@ -76,7 +76,7 @@ class TwinkleAchivements extends StatelessWidget {
         )),
         persistentFooterButtons: [
           Container(
-            padding: EdgeInsets.symmetric(vertical: 5),
+            padding: const EdgeInsets.symmetric(vertical: 5),
             width: MediaQuery.of(context).size.width,
             height: 210,
             color: Utils.DARK_BLUE_COLOR,
@@ -89,7 +89,7 @@ class TwinkleAchivements extends StatelessWidget {
                         textColor: Utils.WHITE_COLOR,
                         backColor: Utils.DARK_BLUE_COLOR,
                         fontWeight: FontWeight.bold)),
-                Container(
+                SizedBox(
                   width: MediaQuery.of(context).size.width,
                   height: 170,
                   //color: Utils.DARK_BLUE_COLOR,

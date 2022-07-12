@@ -1,11 +1,9 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twinkle/data/repository/twinkle_data_repository.dart';
 import 'package:twinkle/presentation/cubit/states.dart';
-import 'package:twinkle/domain/models/main_data_model.dart';
 
-class ModeBloc extends Cubit<TwinkleState>{
-  ModeBloc({required this.repository}) : super(TwinkleLoadingState());
+class ModeCubit extends Cubit<TwinkleState>{
+  ModeCubit({required this.repository}) : super(TwinkleLoadingState());
 
   final TwinkleDataRepository repository;
 
@@ -13,7 +11,7 @@ class ModeBloc extends Cubit<TwinkleState>{
   void loadData() async {
     // Show plash screen
     emit(TwinkleLoadingState());
-    print('loading data...');
+    //print('loading data...');
     repository.loadData();
     await Future.delayed(const Duration(seconds: 3));
 

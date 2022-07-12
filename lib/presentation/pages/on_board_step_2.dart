@@ -1,3 +1,4 @@
+import 'package:android_long_task/long_task/app_client.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:twinkle/presentation/cubit/mode_cubit.dart';
@@ -9,17 +10,19 @@ import 'package:twinkle/presentation/widgets/radio_list.dart';
 import 'package:twinkle/presentation/widgets/separator.dart';
 import 'package:twinkle/presentation/style/styles.dart';
 
+import '../../core/foreground_service_data.dart';
+
 class TwinkleOnBoardTwo extends StatelessWidget {
   const TwinkleOnBoardTwo({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    ModeBloc bloc = context.read<ModeBloc>();//BlocProvider.of<ModeBloc>(context);
+    ModeCubit cubit = context.read<ModeCubit>();//BlocProvider.of<ModeBloc>(context);
     return Consumer<TwinkleDataModel>(
       builder: (context, data, child) {
         return WillPopScope(
           onWillPop: () async {
-            bloc.toOnboardPageOne();
+            cubit.toOnboardPageOne();
             return false;
           },
           child: Scaffold(
@@ -60,20 +63,36 @@ class TwinkleOnBoardTwo extends StatelessWidget {
                   ),
                 )
             ),
+
+            //=============================  ROOTER BUTTONS  ===================================
             persistentFooterButtons: [
               Row(
                 children: [
+
+                  //-------------------  Back to page 1 button  ------------------------------
                   TwinkleButton(text: '<', selected: true, size: 24, width: 30,
                     onPressed: (){
-                      bloc.toOnboardPageOne();
+                      cubit.toOnboardPageOne();
                     },
                   ),
+
+                  // Label 'Step 2 of 2'
                   const TwinkleLabel(data: 'Step 2 of 2', size: 24, width: 170,),
-                  //Padding(padding: EdgeInsets.symmetric(horizontal: 20),),
+
+                  // Sized box
                   const SizedBox(width: 70,),
+
+                  //------------------- Save data and Start Process Button ----------------------
                   TwinkleButton(text: 'Save', selected: true, size: 24, width: 100,
-                  onPressed: (){
-                    bloc.startProcess();
+                  onPressed: () async {
+                    cubit.startProcess();
+
+                    TwinkleDataModel model = context.read<TwinkleDataModel>();
+
+                    //---------------  START FOREGROUND PROCESS  ---------------
+                    await startProcess(model);
+
+                    cubit.resetData(); // Todo: Congratulation page!!!
                   },),
                 ],
               )
@@ -83,4 +102,11 @@ class TwinkleOnBoardTwo extends StatelessWidget {
       }
     );
   }
+}
+
+Future<void> startProcess(TwinkleDataModel model) async {
+  final serviceData = AppServiceData(data: model);
+
+  var result = await AppClient.execute(serviceData);
+  var resultData = AppServiceData.fromJson(result);
 }

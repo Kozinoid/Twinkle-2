@@ -27,18 +27,18 @@ class TwinkleDataRepository extends TwinkleRepository{
   @override
   void loadData() {
     String loadedData =  storage.getPreferences();
-    print('loaded string: $loadedData');
+    //print('loaded string: $loadedData');
     if (loadedData != ''){
-      print('do fromJson');
+      //print('process fromJson');
       data.fromJson(json.decode(loadedData));
     }else{
-      print('keep default data');
+      //print('keep default data');
     }
   }
 
   @override
   void storeData(){
-    print('storing data');
+    //print('storing data');
     storage.storePreferences(json.encode(data.toJson()));
   }
 }

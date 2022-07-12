@@ -1,3 +1,4 @@
+import 'package:android_long_task/long_task/app_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
@@ -10,20 +11,32 @@ import 'package:twinkle/presentation/pages/splash.dart';
 import '../../main.dart';
 import 'achivements.dart';
 import 'main_process.dart';
-import 'on_board_stap_1.dart';
+import 'on_board_step_1.dart';
 import 'on_board_step_2.dart';
 
 class MyHomePage extends StatelessWidget {
-  MyHomePage({Key? key}) : super(key: key);
+  const MyHomePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        BlocProvider(create: (context) => ModeBloc(repository: di.repository)..loadData(),),
+
+        //------------------ Cubit for mode switching --------------------------
+        BlocProvider(create: (context) => ModeCubit(repository: di.repository)..loadData(),),
+
+        //--------------------- Main Data Provider -----------------------------
         ChangeNotifierProvider<TwinkleDataModel>.value(value: di.data),
+
+        //--------------- Foreground process data stream -----------------------
+        StreamProvider<Map<String, dynamic>?>.value(
+            value: AppClient.updates,
+            initialData: di.data.toJson()
+
+        ),
       ],
-      child: BlocBuilder<ModeBloc, TwinkleState>(
+      child: BlocBuilder<ModeCubit, TwinkleState>(
+        //-----------------------------  MODES  --------------------------------
         builder: (context, state) {
           if (state is TwinkleLoadingState) {
             return const TwinkleSplash();
