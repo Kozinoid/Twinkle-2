@@ -10,6 +10,7 @@ import 'package:twinkle/presentation/pages/splash.dart';
 
 import '../../main.dart';
 import 'achivements.dart';
+import 'congratulations.dart';
 import 'main_process.dart';
 import 'on_board_step_1.dart';
 import 'on_board_step_2.dart';
@@ -28,6 +29,12 @@ class MyHomePage extends StatelessWidget {
         //--------------------- Main Data Provider -----------------------------
         ChangeNotifierProvider<TwinkleDataModel>.value(value: di.data),
 
+        //--------------- Foreground process data stream -----------------------
+        StreamProvider<Map<String, dynamic>?>.value(
+            value: AppClient.updates,
+            initialData: di.data.toJson()
+
+        ),
       ],
       child: BlocBuilder<ModeCubit, TwinkleState>(
         //-----------------------------  MODES  --------------------------------
@@ -44,6 +51,8 @@ class MyHomePage extends StatelessWidget {
             return const TwinkleSettings();
           } else if (state is TwinkleAchivementsState) {
             return const TwinkleAchivements();
+          } if (state is TwinkleCongratulationsState) {
+            return const TwinkleCongratulations();
           } else {
             return Container();
           }

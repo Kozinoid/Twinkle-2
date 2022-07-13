@@ -12,11 +12,11 @@ class TwinkleDataModel extends UserData{
       perDay.value = json['perDay'];
       daysToSmokeBreak.value = json['timeForSmokeBreak'];
       registrationDate = DateTime.parse(json['registrationDate']);
-      started = json['started'];
+      processState = ProcessState.values[json['processState'] as int];
       extraCigarettesCount = json['extraCigarettesCount'];
       String timeString = json['firstCigaretteTime']; // ??
-      //print('timeString: $timeString');
       firstCigaretteTime = DateTime.parse(timeString);
+      print('Process state: $processState');
   }
 
   Map<String, dynamic> toJson(){
@@ -28,7 +28,7 @@ class TwinkleDataModel extends UserData{
       'perDay' : perDay.value,
       'timeForSmokeBreak' : daysToSmokeBreak.value,
       'registrationDate' : registrationDate.toString(),
-      'started' : started,
+      'processState' : processState.index,
       'extraCigarettesCount' : extraCigarettesCount,
       'firstCigaretteTime' : firstCigaretteTime.toString()
     };

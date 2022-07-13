@@ -4,23 +4,31 @@ import 'package:twinkle/data/shared_preferences/local_data_storage.dart';
 import 'package:twinkle/domain/models/main_data_model.dart';
 import 'package:twinkle/domain/repository/data_repository.dart';
 
+import '../../domain/models/user_data.dart';
+
 class TwinkleDataRepository extends TwinkleRepository{
   TwinkleDataRepository({required this.data, required this.storage});
 
   // Main data
   final TwinkleDataModel data;
   final LocalStorage storage;
-  bool get isStarted => data.started;
+  ProcessState get processState => data.processState;
 
   // Start process
   void startProcess(){
-    data.storeUserData();
+    data.startDataState();
     storeData();
   }
 
   // Reset All Data
   void resetAllData(){
-    data.resetAllData();
+    data.resetDataState();
+    storeData();
+  }
+
+  // End process
+  void endProcess(){
+    data.congratulationDataState();
     storeData();
   }
 

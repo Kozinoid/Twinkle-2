@@ -17,7 +17,7 @@ class MainProcess extends StatelessWidget {
   Widget build(BuildContext context) {
     ModeCubit cubit = context.read<ModeCubit>();//BlocProvider.of<ModeBloc>(context);
 
-    return Consumer<TwinkleDataModel>(
+    return Consumer<Map<String, dynamic>?>(
       builder:(context, data, child) {
         //AppServiceData serviceData = AppServiceData.fromJson(data!);
         return WillPopScope(

@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twinkle/data/repository/twinkle_data_repository.dart';
+import 'package:twinkle/domain/models/user_data.dart';
 import 'package:twinkle/presentation/cubit/states.dart';
 
 class ModeCubit extends Cubit<TwinkleState>{
@@ -10,18 +11,28 @@ class ModeCubit extends Cubit<TwinkleState>{
   // Load data to repository
   void loadData() async {
     // Show plash screen
-    emit(TwinkleLoadingState());
+    toSplashScreen();
+
     //print('loading data...');
     repository.loadData();
     await Future.delayed(const Duration(seconds: 3));
 
-    if (repository.isStarted) {
-      // if process was started early -> to Main screen
-      toMainScreen();
-    } else {
-      // else: -> Initialization page 1.
-      emit(TwinkleOnBoardOneState());
+    switch(repository.processState) {
+      case ProcessState.stopped:
+        toOnboardPageOne();
+        break;
+      case ProcessState.started:
+        toMainScreen();
+        break;
+      case ProcessState.ended:
+        toCongratulationsPage();
+        break;
     }
+  }
+
+  // To splash
+  void toSplashScreen(){
+    emit(TwinkleLoadingState());
   }
 
   // First settings. Page 1
@@ -32,12 +43,6 @@ class ModeCubit extends Cubit<TwinkleState>{
   // First settings. Page 2
   void toOnboardPageTwo(){
     emit(TwinkleOnBoardTwoState());
-  }
-
-  // Start process -> to Main screen
-  void startProcess(){
-    repository.startProcess();
-    toMainScreen();
   }
 
   // To Main screen
@@ -55,9 +60,26 @@ class ModeCubit extends Cubit<TwinkleState>{
     emit(TwinkleAchivementsState());
   }
 
-  // Reset data ->
+  // To congratulations
+  void toCongratulationsPage(){
+    emit(TwinkleCongratulationsState());
+  }
+
+  // Start process -> to Main screen
+  void startProcess(){
+    repository.startProcess();
+    toMainScreen();
+  }
+
+  // Reset data -> to Initial Setting screen
   void resetData(){
     repository.resetAllData();
     loadData();
+  }
+
+  // End process -> to Congratulations screen
+  void endProcess(){
+    repository.endProcess();
+    toCongratulationsPage();
   }
 }

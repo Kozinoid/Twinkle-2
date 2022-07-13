@@ -1,6 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:twinkle/core/types.dart';
 
+// Main States Enum
+enum ProcessState{
+  stopped,
+  started,
+  ended
+}
+
 class UserData with ChangeNotifier {
   // Constructor
   UserData(){
@@ -66,9 +73,9 @@ class UserData with ChangeNotifier {
 
   //-------------------------------- Process -----------------------------------
   // Registered
-  bool _started = false;
-  bool get started => _started;
-  void set started(bool value){_started = value;}
+  ProcessState _processState = ProcessState.stopped;
+  set processState(ProcessState value){_processState = value;}
+  ProcessState get processState => _processState;
 
   // Extra cigarettes count from begin
   int _extraCigarettesCount = 0;
@@ -82,16 +89,21 @@ class UserData with ChangeNotifier {
 
   //------------------------------ Methods -------------------------------------
   // Store user data
-  void storeUserData(){
+  void startDataState(){
     // store registration date
     _registrationDate = DateTime.now();
     _extraCigarettesCount = 0;
-    _started = true;
+    _processState = ProcessState.started;
   }
 
   // Reset all data
-  void resetAllData(){
-    _started = false;
+  void resetDataState(){
+    _processState = ProcessState.stopped;
+  }
+
+  // CongratulationDataState
+  void congratulationDataState(){
+    _processState = ProcessState.ended;
   }
 
   // Calculate passed cigarettes

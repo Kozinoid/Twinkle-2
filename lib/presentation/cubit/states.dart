@@ -11,3 +11,5 @@ class TwinkleProcessingState extends TwinkleState{}
 class TwinkleSettingsState extends TwinkleState{}
 
 class TwinkleAchivementsState extends TwinkleState{}
+
+class TwinkleCongratulationsState extends TwinkleState{}

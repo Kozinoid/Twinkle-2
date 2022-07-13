@@ -4,13 +4,13 @@ import 'package:twinkle/data/shared_preferences/local_data_storage.dart';
 import 'package:twinkle/domain/models/main_data_model.dart';
 
 import 'foreground_service_data.dart';
+import 'notification_service.dart';
 
 class DIContainer{
   late SharedPreferences preferences;
   late LocalStorage storage;
   late TwinkleDataModel data;
   late TwinkleDataRepository repository;
-  // late AppServiceData serviceData;
 
   Future<void> initDependencies()  {
     return Future(()async{
