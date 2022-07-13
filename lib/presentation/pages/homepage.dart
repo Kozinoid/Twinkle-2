@@ -28,12 +28,6 @@ class MyHomePage extends StatelessWidget {
         //--------------------- Main Data Provider -----------------------------
         ChangeNotifierProvider<TwinkleDataModel>.value(value: di.data),
 
-        //--------------- Foreground process data stream -----------------------
-        StreamProvider<Map<String, dynamic>?>.value(
-            value: AppClient.updates,
-            initialData: di.data.toJson()
-
-        ),
       ],
       child: BlocBuilder<ModeCubit, TwinkleState>(
         //-----------------------------  MODES  --------------------------------
