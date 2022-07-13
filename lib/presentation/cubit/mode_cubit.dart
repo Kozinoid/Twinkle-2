@@ -11,9 +11,10 @@ class ModeCubit extends Cubit<TwinkleState>{
 
   final TwinkleDataRepository repository;
 
-  //--------------------------- New version ------------------------------------
+  //********************************************* New version *****************************************************
   //           +-(Load data)-+--------------------------+--------------------------------------+
   //           |             |                          |                                      |
+  //   (detect process)      |                          |                                      |
   //           |             V                          V                                      V
   //  Splash --+      +-> Stopped -----------------> Started -------> [process] -----------> Ended ----------------+
   //                  | (Store data)               (Store data)                           (Store data)             |
