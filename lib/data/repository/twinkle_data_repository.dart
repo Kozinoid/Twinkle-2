@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:flutter/cupertino.dart';
 import 'package:twinkle/data/shared_preferences/local_data_storage.dart';
 import 'package:twinkle/domain/models/main_data_model.dart';
 import 'package:twinkle/domain/repository/data_repository.dart';
@@ -14,6 +13,7 @@ class TwinkleDataRepository extends TwinkleRepository{
   final LocalStorage storage;
   ProcessState get processState => data.processState;
 
+  //-------------------------- TREE MAIN CASES ---------------------------------
   // Start process
   void startProcess(){
     data.startDataState();
@@ -32,6 +32,7 @@ class TwinkleDataRepository extends TwinkleRepository{
     storeData();
   }
 
+  //---------------------------- OVERRIDES -------------------------------------
   @override
   void loadData() {
     String loadedData =  storage.getPreferences();

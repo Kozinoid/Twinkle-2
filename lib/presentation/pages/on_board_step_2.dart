@@ -130,15 +130,9 @@ class TwinkleOnBoardTwo extends StatelessWidget {
                   selected: true,
                   size: 24,
                   width: 100,
-                  onPressed: () async {
-                    cubit.startProcess();
-
+                  onPressed: () {
                     TwinkleDataModel model = context.read<TwinkleDataModel>();
-
-                    //---------------  START FOREGROUND PROCESS  ---------------
-                    await startProcess(model);
-
-                    cubit.endProcess(); // Todo: Congratulation page!!!
+                    cubit.startProcess();
                   },
                 ),
               ],
@@ -150,9 +144,3 @@ class TwinkleOnBoardTwo extends StatelessWidget {
   }
 }
 
-Future<void> startProcess(TwinkleDataModel model) async {
-  final serviceData = AppServiceData(data: model);
-
-  var result = await AppClient.execute(serviceData);
-  var resultData = AppServiceData.fromJson(result);
-}

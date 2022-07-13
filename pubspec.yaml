@@ -41,6 +41,7 @@ dependencies:
   shared_preferences: ^2.0.15
   android_long_task: ^1.0.0
   flutter_local_notifications: ^9.7.0
+  equatable: ^2.0.3
 
 dev_dependencies:
   flutter_test:

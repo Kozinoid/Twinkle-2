@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:twinkle/core/types.dart';
+import 'package:equatable/equatable.dart';
 
 // Main States Enum
 enum ProcessState{
@@ -8,7 +9,7 @@ enum ProcessState{
   ended
 }
 
-class UserData with ChangeNotifier {
+class UserData extends Equatable with ChangeNotifier {
   // Constructor
   UserData(){
     // Set onChange handlers for all fields
@@ -125,4 +126,10 @@ class UserData with ChangeNotifier {
     _endOfSmoke = ((_currentDay / daysToSmokeBreak.value) * 100).round();
     notifyListeners();
   }
+
+  @override
+  // TODO: implement props
+  List<Object?> get props => [age, _gender, _currency, price, perDay, daysToSmokeBreak, _registrationDate,
+    _currentDay, _minusCigarettePerDay, _passedCigarettesToday, _passedCigarettesFromBegin, _passedMoney, _endOfSmoke,
+    _processState, _extraCigarettesCount, _firstCigaretteTime];
 }

@@ -24,7 +24,7 @@ class MyHomePage extends StatelessWidget {
       providers: [
 
         //------------------ Cubit for mode switching --------------------------
-        BlocProvider(create: (context) => ModeCubit(repository: di.repository)..loadData(),),
+        BlocProvider(create: (context) => ModeCubit(repository: di.repository)..initialState(),),
 
         //--------------------- Main Data Provider -----------------------------
         ChangeNotifierProvider<TwinkleDataModel>.value(value: di.data),

@@ -5,6 +5,9 @@ import 'core/foreground_service_data.dart';
 import 'core/notification_service.dart';
 import 'core/service_locator.dart';
 import 'package:android_long_task/long_task/service_client.dart';
+//******************************************************************************
+//*                               APP SIDE                                     *
+//******************************************************************************
 
 //----------------------------- DI Container -----------------------------------
 DIContainer di = DIContainer();
@@ -35,6 +38,8 @@ void _setScreenOrientation() {
 
 //--------------------------------- App ----------------------------------------
 class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
@@ -42,6 +47,10 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
+//******************************************************************************
+//*                             PROCESS SIDE                                   *
+//******************************************************************************
 
 //--------------------------  Foreground process  ------------------------------
 @pragma('vm:entry-point')
@@ -70,19 +79,20 @@ Future<void> processCallBack(initialData) async {
       delayTime: const Duration(seconds: 5)
   );
 
-  // ------------------- Main loop ------------------
-  for (var i = 0;; i++) {
+  // ------------------- Main loop -------------------
+  for (var i = 0;; i++) { // Loop conditions
+    //---------------- Schedule logic ----------------
     serviceData.data.calculates();
 
     // --------------- Update data -------------------
-    // if (i % 3 == 0) {
-    //   NotificationService().showNotifications(
-    //       id: 1,
-    //       title: 'You can smoke after',
-    //       body: '$i minutes',
-    //       payload: 'Payload');
-    // }
-
+    if (i == 3) {
+      NotificationService().showNotifications(
+          id: 1,
+          title: 'You can smoke after',
+          body: '$i minutes',
+          payload: 'Payload');
+    }
+    // --------------- update callback ---------------
     await ServiceClient.update(serviceData);
 
     // ----------- End of process condition ----------
@@ -93,7 +103,7 @@ Future<void> processCallBack(initialData) async {
           title: 'Congratulations!',
           body: 'You are not smoker!',
           payload: 'Payload');
-
+      //--------------- Kill process -----------------
       await ServiceClient.endExecution(serviceData);
       var result = await ServiceClient.stopService();
       // ---------------------------------------------

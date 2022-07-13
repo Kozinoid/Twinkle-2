@@ -92,7 +92,6 @@ class TwinkleSettings extends StatelessWidget {
                 bool result = await showConfirmDialog(context, title: 'Do you really want to clear all data?');
                 //print('result = $result');
                 if (result) {
-                  AppClient.stopService();
                   bloc.resetData();
                 }
               },),

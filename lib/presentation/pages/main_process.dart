@@ -19,7 +19,7 @@ class MainProcess extends StatelessWidget {
 
     return Consumer<Map<String, dynamic>?>(
       builder:(context, data, child) {
-        //AppServiceData serviceData = AppServiceData.fromJson(data!);
+        print('---------------------BUILDER-----------------------');
         return WillPopScope(
           onWillPop: ()async{
             return await showConfirmDialog(context, title: 'Do you really want to exit?');
