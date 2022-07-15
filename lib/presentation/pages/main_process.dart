@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:provider/src/provider.dart';
-import 'package:twinkle/domain/models/main_data_model.dart';
 import 'package:twinkle/presentation/cubit/mode_cubit.dart';
 import 'package:twinkle/presentation/dialogs/confirm_dialog.dart';
 import 'package:twinkle/presentation/style/styles.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
-import '../../core/foreground_service_data.dart';
 
 class MainProcess extends StatelessWidget {
   const MainProcess({Key? key}) : super(key: key);

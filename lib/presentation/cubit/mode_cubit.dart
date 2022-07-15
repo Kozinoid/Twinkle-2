@@ -1,10 +1,7 @@
-import 'package:android_long_task/long_task/app_client.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twinkle/data/repository/twinkle_data_repository.dart';
 import 'package:twinkle/domain/models/user_data.dart';
 import 'package:twinkle/presentation/cubit/states.dart';
-
-import '../../core/foreground_service_data.dart';
 
 class ModeCubit extends Cubit<TwinkleState>{
   ModeCubit({required this.repository}) : super(TwinkleLoadingState());
@@ -28,18 +25,19 @@ class ModeCubit extends Cubit<TwinkleState>{
     // Show plash screen
     toSplashScreen();
     await Future.delayed(const Duration(seconds: 3));
-    try{
-      var result = await AppClient.getData();
-      if (result == null){
-        // process was stopped or ended
 
-      }else{
-        // process is running
-
-      }
-    } catch (e){
-      print('----------------ERROR GETTING DATA------------------');
-    }
+    // try{
+    //   // Todo: get state
+    //   if (result == null){
+    //     // process was stopped or ended
+    //
+    //   }else{
+    //     // process is running
+    //
+    //   }
+    // } catch (e){
+    //   print('----------------ERROR GETTING DATA------------------');
+    // }
 
     loadState();
   }
@@ -107,9 +105,7 @@ class ModeCubit extends Cubit<TwinkleState>{
     selectPage();
 
     //---------------  START FOREGROUND PROCESS  ---------------
-    final serviceData = AppServiceData(data: repository.data);
-    var result = await AppClient.execute(serviceData);
-    var resultData = AppServiceData.fromJson(result);
+    // Todo: start process
 
     endProcess();
     selectPage();
@@ -118,7 +114,7 @@ class ModeCubit extends Cubit<TwinkleState>{
   // Reset data -> to Initial Setting screen
   void resetData(){
     // Stop process
-    AppClient.stopService();
+    // Todo: reset process
     // Reset data
     repository.resetAllData();
     // Change page

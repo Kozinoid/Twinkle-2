@@ -1,4 +1,3 @@
-import 'package:android_long_task/long_task/app_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
@@ -30,11 +29,7 @@ class MyHomePage extends StatelessWidget {
         ChangeNotifierProvider<TwinkleDataModel>.value(value: di.data),
 
         //--------------- Foreground process data stream -----------------------
-        StreamProvider<Map<String, dynamic>?>.value(
-            value: AppClient.updates,
-            initialData: di.data.toJson()
-
-        ),
+        //...........
       ],
       child: BlocBuilder<ModeCubit, TwinkleState>(
         //-----------------------------  MODES  --------------------------------

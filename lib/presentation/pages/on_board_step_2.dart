@@ -1,4 +1,3 @@
-import 'package:android_long_task/long_task/app_client.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:twinkle/presentation/cubit/mode_cubit.dart';
@@ -9,8 +8,6 @@ import 'package:twinkle/presentation/widgets/label.dart';
 import 'package:twinkle/presentation/widgets/radio_list.dart';
 import 'package:twinkle/presentation/widgets/separator.dart';
 import 'package:twinkle/presentation/style/styles.dart';
-
-import '../../core/foreground_service_data.dart';
 
 class TwinkleOnBoardTwo extends StatelessWidget {
   const TwinkleOnBoardTwo({Key? key}) : super(key: key);
@@ -131,7 +128,7 @@ class TwinkleOnBoardTwo extends StatelessWidget {
                   size: 24,
                   width: 100,
                   onPressed: () {
-                    TwinkleDataModel model = context.read<TwinkleDataModel>();
+                    //TwinkleDataModel model = context.read<TwinkleDataModel>();
                     cubit.startProcess();
                   },
                 ),

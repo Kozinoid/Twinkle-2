@@ -3,9 +3,6 @@ import 'package:twinkle/data/repository/twinkle_data_repository.dart';
 import 'package:twinkle/data/shared_preferences/local_data_storage.dart';
 import 'package:twinkle/domain/models/main_data_model.dart';
 
-import 'foreground_service_data.dart';
-import 'notification_service.dart';
-
 class DIContainer{
   late SharedPreferences preferences;
   late LocalStorage storage;

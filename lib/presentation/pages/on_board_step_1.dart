@@ -10,8 +10,6 @@ import 'package:twinkle/presentation/widgets/radio_list.dart';
 import 'package:twinkle/presentation/widgets/separator.dart';
 import 'package:twinkle/presentation/style/styles.dart';
 
-import '../../core/notification_service.dart';
-
 class TwinkleOnBoardOne extends StatelessWidget {
   const TwinkleOnBoardOne({Key? key}) : super(key: key);
 
