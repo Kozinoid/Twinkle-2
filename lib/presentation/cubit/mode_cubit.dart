@@ -3,6 +3,8 @@ import 'package:twinkle/data/repository/twinkle_data_repository.dart';
 import 'package:twinkle/domain/models/user_data.dart';
 import 'package:twinkle/presentation/cubit/states.dart';
 
+import '../../main.dart';
+
 class ModeCubit extends Cubit<TwinkleState>{
   ModeCubit({required this.repository}) : super(TwinkleLoadingState());
 
@@ -25,28 +27,21 @@ class ModeCubit extends Cubit<TwinkleState>{
     // Show plash screen
     toSplashScreen();
     await Future.delayed(const Duration(seconds: 3));
-
-    // try{
-    //   // Todo: get state
-    //   if (result == null){
-    //     // process was stopped or ended
-    //
-    //   }else{
-    //     // process is running
-    //
-    //   }
-    // } catch (e){
-    //   print('----------------ERROR GETTING DATA------------------');
-    // }
-
     loadState();
+    bool isRunning = await di.api.isRunning;
+    ProcessState processState = repository.data.processState;
+    //print('is running: $isRunning, Process state: $processState');
+    if (!isRunning && processState == ProcessState.started){
+      startProcess();
+    }else{
+      selectPage();
+    }
   }
 
   // Load data to repository
   void loadState() {
     //print('loading data...');
     repository.loadData();
-    selectPage();
   }
 
   // Select page
@@ -103,18 +98,14 @@ class ModeCubit extends Cubit<TwinkleState>{
   void startProcess() async {
     repository.startProcess();
     selectPage();
-
-    //---------------  START FOREGROUND PROCESS  ---------------
-    // Todo: start process
-
-    endProcess();
-    selectPage();
+    // Start foreground process
+    di.api.startForegroundTask(repository.data);
   }
 
   // Reset data -> to Initial Setting screen
   void resetData(){
-    // Stop process
-    // Todo: reset process
+    // Stop foreground process
+    di.api.stopForegroundTask();
     // Reset data
     repository.resetAllData();
     // Change page

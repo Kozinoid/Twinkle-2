@@ -14,8 +14,30 @@ import 'main_process.dart';
 import 'on_board_step_1.dart';
 import 'on_board_step_2.dart';
 
-class MyHomePage extends StatelessWidget {
+class MyHomePage extends StatelessWidget with WidgetsBindingObserver{
   const MyHomePage({Key? key}) : super(key: key);
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    //print(state);
+    super.didChangeAppLifecycleState(state);
+    switch(state) {
+      case AppLifecycleState.resumed:
+      // TODO: Handle this case.
+        break;
+      case AppLifecycleState.inactive:
+      // TODO: Handle this case.
+        break;
+      case AppLifecycleState.paused:
+      // TODO: Handle this case.
+        break;
+      case AppLifecycleState.detached:
+        di.api.closeReceivePort();
+        print('Remove lifecycle observer');
+        //WidgetsBinding.instance.removeObserver(di.exPage);
+        break;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,8 +50,6 @@ class MyHomePage extends StatelessWidget {
         //--------------------- Main Data Provider -----------------------------
         ChangeNotifierProvider<TwinkleDataModel>.value(value: di.data),
 
-        //--------------- Foreground process data stream -----------------------
-        //...........
       ],
       child: BlocBuilder<ModeCubit, TwinkleState>(
         //-----------------------------  MODES  --------------------------------

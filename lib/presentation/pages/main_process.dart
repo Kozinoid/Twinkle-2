@@ -5,6 +5,7 @@ import 'package:twinkle/presentation/dialogs/confirm_dialog.dart';
 import 'package:twinkle/presentation/style/styles.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import '../../domain/models/main_data_model.dart';
 
 class MainProcess extends StatelessWidget {
   const MainProcess({Key? key}) : super(key: key);
@@ -13,9 +14,9 @@ class MainProcess extends StatelessWidget {
   Widget build(BuildContext context) {
     ModeCubit cubit = context.read<ModeCubit>();//BlocProvider.of<ModeBloc>(context);
 
-    return Consumer<Map<String, dynamic>?>(
+    return Consumer<TwinkleDataModel>(
       builder:(context, data, child) {
-        print('---------------------BUILDER-----------------------');
+        print('===============  UPDATE MAIN DATA  ===============');
         return WillPopScope(
           onWillPop: ()async{
             return await showConfirmDialog(context, title: 'Do you really want to exit?');

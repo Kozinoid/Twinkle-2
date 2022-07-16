@@ -124,6 +124,11 @@ class UserData extends Equatable with ChangeNotifier {
     _passedCigarettesFromBegin = getPassedCigarettes() - _extraCigarettesCount;
     _passedMoney = (_passedCigarettesFromBegin * (price.value / 20)).round();
     _endOfSmoke = ((_currentDay / daysToSmokeBreak.value) * 100).round();
+    //notifyListeners();
+  }
+
+  // Get updates
+  void getUpdates(){
     notifyListeners();
   }
 

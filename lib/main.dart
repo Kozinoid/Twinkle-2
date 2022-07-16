@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:twinkle/presentation/pages/homepage.dart';
 import 'core/service_locator.dart';
+
 //******************************************************************************
 //*                               APP SIDE                                     *
 //******************************************************************************
@@ -35,8 +36,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: MyHomePage(),
+    return MaterialApp(
+      home: di.homePage,
     );
   }
 }
