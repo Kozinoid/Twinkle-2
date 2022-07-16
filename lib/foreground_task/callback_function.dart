@@ -23,7 +23,6 @@ class MyTaskHandler extends TaskHandler {
     _sendPort = sendPort;
 
     // ......................  load custom data  ...............................
-    //
     final json = await FlutterForegroundTask.getData<String>(key: 'twinkleData');
     _dataModel.fromJson(jsonDecode(json!));
   }

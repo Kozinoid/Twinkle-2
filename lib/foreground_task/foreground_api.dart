@@ -71,7 +71,6 @@ class ForegroundApi {
 
     // ........................  save custom data  .............................
     await FlutterForegroundTask.saveData(key: 'twinkleData', value: jsonEncode(data.toJson()));
-    //print('save custom data');
 
     ReceivePort? rPort;
     if (await FlutterForegroundTask.isRunningService) {

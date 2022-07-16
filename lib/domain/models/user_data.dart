@@ -114,16 +114,14 @@ class UserData extends Equatable with ChangeNotifier {
   ProcessState get processState => _processState;
 
   // Extra cigarettes count from begin
-  int _extraCigarettesCount = 0;
-  set extraCigarettesCount(int value) {_extraCigarettesCount = value;}
-  int get extraCigarettesCount => _extraCigarettesCount;
+  int extraCigarettesCount = 0;
 
   //------------------------------ Methods -------------------------------------
   // Store user data
   void startDataState(){
     // store registration date
     _registrationDate = DateTime.now();
-    _extraCigarettesCount = 0;
+    extraCigarettesCount = 0;
     _processState = ProcessState.started;
   }
 
@@ -150,26 +148,26 @@ class UserData extends Equatable with ChangeNotifier {
   void calculates(){
     // get current day
     _currentDay = DateTime.now().difference(_registrationDate).inDays;
-    // everyday decrease cigarette count
-    _minusCigarettePerDay = perDay.value / daysToSmokeBreak.value;
 
-    _savedCigarettesToday = (_currentDay * _minusCigarettePerDay).floor();
-    _savedCigarettesFromBegin = getSavedCigarettes() - _extraCigarettesCount;
-    _savedMoney = (_savedCigarettesFromBegin * (price.value / 20)).round();
-    _endOfSmoke = ((_currentDay / daysToSmokeBreak.value) * 100).round();
+    // everyday decrease cigarette count
+    //_minusCigarettePerDay = perDay.value / daysToSmokeBreak.value;
+    //_savedCigarettesToday = (_currentDay * _minusCigarettePerDay).floor();
+    //_savedCigarettesFromBegin = getSavedCigarettes() - extraCigarettesCount;
+    //_savedMoney = (_savedCigarettesFromBegin * (price.value / 20)).round();
+    //_endOfSmoke = ((_currentDay / daysToSmokeBreak.value) * 100).round();
     _totalCigarettesToday = perDay.value - _savedCigarettesToday;
 
     // time between cigarette smoke
     _interval = (_lastCigaretteTime - _firstCigaretteTime) / (_totalCigarettesToday + 1);
     // now
-    DateTime _now = DateTime.now();
-    DayTime _timeNow = DayTime(hours: _now.hour, minutes: _now.minute);
+    DateTime now = DateTime.now();
+    DayTime timeNow = DayTime(hours: now.hour, minutes: now.minute);
 
-    if ((_firstCigaretteTime < _timeNow)&&(_timeNow < _lastCigaretteTime)){
-      _timeToNext = _interval * (((_timeNow - _firstCigaretteTime) ~/ _interval) + 1) - (_timeNow - _firstCigaretteTime);
+    if ((_firstCigaretteTime < timeNow)&&(timeNow < _lastCigaretteTime)){
+      _timeToNext = _interval * (((timeNow - _firstCigaretteTime) ~/ _interval) + 1) - (timeNow - _firstCigaretteTime);
       _percentToNext = _timeToNext.inMinutes() / _interval.inMinutes();
     }else{
-      _timeToNext = _firstCigaretteTime + DayTime.parse('24:00') - _timeNow;
+      _timeToNext = _firstCigaretteTime + DayTime.parse('24:00') - timeNow;
       _percentToNext = _timeToNext.inMinutes() / (_firstCigaretteTime + DayTime.parse('24:00') - _lastCigaretteTime).inMinutes();
     }
   }
