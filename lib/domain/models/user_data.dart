@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:twinkle/core/types.dart';
 import 'package:equatable/equatable.dart';
+import 'package:twinkle/domain/models/time_class.dart';
 
 // Main States Enum
 enum ProcessState{
@@ -47,6 +48,16 @@ class UserData extends Equatable with ChangeNotifier {
   set registrationDate(DateTime value) => _registrationDate = value;
   DateTime get registrationDate => _registrationDate;
 
+  // Start smoke time today
+  DayTime _firstCigaretteTime = DayTime(hours: 7, minutes: 0);
+  set firstCigaretteTime(DayTime value) {_firstCigaretteTime = value;}
+  DayTime get firstCigaretteTime => _firstCigaretteTime;
+
+  // Finish smoke time today
+  DayTime _lastCigaretteTime = DayTime(hours: 23, minutes: 0);
+  set lastCigaretteTime(DayTime value) {_lastCigaretteTime = value;}
+  DayTime get lastCigaretteTime => _lastCigaretteTime;
+
   //--------------------------- Calculations -----------------------------------
   // Current day number
   int _currentDay = 0;
@@ -56,21 +67,45 @@ class UserData extends Equatable with ChangeNotifier {
   double _minusCigarettePerDay = 0;
   double get minusCigarettePerDay => _minusCigarettePerDay;
 
-  // Cigarettes, passed today
-  int _passedCigarettesToday = 0;
-  int get passedCigarettesToday => _passedCigarettesToday;
+  // Cigarettes, saved today
+  int _savedCigarettesToday = 0;
+  int get savedCigarettesToday => _savedCigarettesToday;
+
+  // Cigarettes, saved from begin
+  int _savedCigarettesFromBegin = 0;
+  int get savedCigarettesFromBegin => _savedCigarettesFromBegin;
+
+  // Money, saved from begin
+  int _savedMoney = 0;
+  int get savedMoney => _savedMoney;
+
+  // Time in percent to stop smoke finish
+  int _endOfSmoke = 0;
+  int get endOfSmoke => _endOfSmoke;
 
   // Cigarettes, passed from begin
   int _passedCigarettesFromBegin = 0;
   int get passedCigarettesFromBegin => _passedCigarettesFromBegin;
 
-  // Money, passed from begin
-  int _passedMoney = 0;
-  int get passedMoney => _passedMoney;
+  // Cigarettes, passed today
+  int _totalCigarettesToday = 0;
+  int get totalCigarettesToday => _totalCigarettesToday;
 
-  // Time in percent to stop smoke finish
-  int _endOfSmoke = 0;
-  int get endOfSmoke => _endOfSmoke;
+  // Cigarettes, smoked by now
+  int _smokedByNow = 0;
+  int get smokedByNow => _smokedByNow;
+
+  // Interval
+  DayTime _interval = DayTime(hours: 1, minutes: 0);
+  DayTime get interval => _interval;
+
+  // Time to next smoke
+  DayTime _timeToNext = DayTime(hours: 1, minutes: 0);
+  DayTime get timeToNext => _timeToNext;
+
+  // Percent to next
+  double _percentToNext = 0.75;
+  double get percentToNext => _percentToNext;
 
   //-------------------------------- Process -----------------------------------
   // Registered
@@ -82,11 +117,6 @@ class UserData extends Equatable with ChangeNotifier {
   int _extraCigarettesCount = 0;
   set extraCigarettesCount(int value) {_extraCigarettesCount = value;}
   int get extraCigarettesCount => _extraCigarettesCount;
-
-  // First cigarette time today
-  DateTime _firstCigaretteTime = DateTime.parse('2022-07-05 07:00:00.905401');
-  set firstCigaretteTime(DateTime value) {_firstCigaretteTime = value;}
-  DateTime get firstCigaretteTime => _firstCigaretteTime;
 
   //------------------------------ Methods -------------------------------------
   // Store user data
@@ -108,7 +138,7 @@ class UserData extends Equatable with ChangeNotifier {
   }
 
   // Calculate passed cigarettes
-  int getPassedCigarettes(){
+  int getSavedCigarettes(){
     double sum = 0;
     for (var i = 0; i < _currentDay; i++){
       sum += (i * _minusCigarettePerDay);
@@ -118,13 +148,30 @@ class UserData extends Equatable with ChangeNotifier {
 
   // Current State Data
   void calculates(){
+    // get current day
     _currentDay = DateTime.now().difference(_registrationDate).inDays;
+    // everyday decrease cigarette count
     _minusCigarettePerDay = perDay.value / daysToSmokeBreak.value;
-    _passedCigarettesToday = (_currentDay * _minusCigarettePerDay).floor();
-    _passedCigarettesFromBegin = getPassedCigarettes() - _extraCigarettesCount;
-    _passedMoney = (_passedCigarettesFromBegin * (price.value / 20)).round();
+
+    _savedCigarettesToday = (_currentDay * _minusCigarettePerDay).floor();
+    _savedCigarettesFromBegin = getSavedCigarettes() - _extraCigarettesCount;
+    _savedMoney = (_savedCigarettesFromBegin * (price.value / 20)).round();
     _endOfSmoke = ((_currentDay / daysToSmokeBreak.value) * 100).round();
-    //notifyListeners();
+    _totalCigarettesToday = perDay.value - _savedCigarettesToday;
+
+    // time between cigarette smoke
+    _interval = (_lastCigaretteTime - _firstCigaretteTime) / (_totalCigarettesToday + 1);
+    // now
+    DateTime _now = DateTime.now();
+    DayTime _timeNow = DayTime(hours: _now.hour, minutes: _now.minute);
+
+    if ((_firstCigaretteTime < _timeNow)&&(_timeNow < _lastCigaretteTime)){
+      _timeToNext = _interval * (((_timeNow - _firstCigaretteTime) ~/ _interval) + 1) - (_timeNow - _firstCigaretteTime);
+      _percentToNext = _timeToNext.inMinutes() / _interval.inMinutes();
+    }else{
+      _timeToNext = _firstCigaretteTime + DayTime.parse('24:00') - _timeNow;
+      _percentToNext = _timeToNext.inMinutes() / (_firstCigaretteTime + DayTime.parse('24:00') - _lastCigaretteTime).inMinutes();
+    }
   }
 
   // Get updates
@@ -135,6 +182,5 @@ class UserData extends Equatable with ChangeNotifier {
   @override
   // TODO: implement props
   List<Object?> get props => [age, _gender, _currency, price, perDay, daysToSmokeBreak, _registrationDate,
-    _currentDay, _minusCigarettePerDay, _passedCigarettesToday, _passedCigarettesFromBegin, _passedMoney, _endOfSmoke,
-    _processState, _extraCigarettesCount, _firstCigaretteTime];
+     _firstCigaretteTime, _lastCigaretteTime, _passedCigarettesFromBegin, _processState, _interval];
 }

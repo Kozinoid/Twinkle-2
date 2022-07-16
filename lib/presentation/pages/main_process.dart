@@ -16,7 +16,10 @@ class MainProcess extends StatelessWidget {
 
     return Consumer<TwinkleDataModel>(
       builder:(context, data, child) {
-        print('===============  UPDATE MAIN DATA  ===============');
+        data.calculates();
+        final intervalString = data.timeToNext.toString();
+        final hoursString = data.timeToNext.hours;
+        final minutesString = data.timeToNext.minutes;
         return WillPopScope(
           onWillPop: ()async{
             return await showConfirmDialog(context, title: 'Do you really want to exit?');
@@ -33,21 +36,21 @@ class MainProcess extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.all(20.0),
                       child: Text(
-                          'You can smoke after 45 minutes',
+                          'You can smoke after $hoursString hours $minutesString minutes',
                           textAlign: TextAlign.center,
                           style: Utils.getWhiteOnOrangeStyle(size: 32)),
                     ),
 
                     //---------------------  Remainig time indicator  -----------------------
                     CircularPercentIndicator(
-                      percent: 0.75,
+                      percent: 1.0 - data.percentToNext,
                       lineWidth: 30,
                       radius: MediaQuery.of(context).size.width / 2 * 0.9,
                       backgroundColor: Utils.ORANGE_COLOR,
                       progressColor: Utils.WHITE_COLOR,
                       circularStrokeCap: CircularStrokeCap.round,
                       center: Text(
-                        '45:57',
+                        intervalString,
                         style: Utils.getWhiteOnOrangeStyle(size: 64),),
                     ),
 

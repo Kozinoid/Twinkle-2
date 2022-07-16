@@ -32,10 +32,10 @@ class ForegroundApi {
           name: 'launcher',
           backgroundColor: Colors.orange,
         ),
-        buttons: [
-          const NotificationButton(id: 'sendButton', text: 'Send'),
-          const NotificationButton(id: 'testButton', text: 'Test'),
-        ],
+        // buttons: [
+        //   const NotificationButton(id: 'sendButton', text: 'Send'),
+        //   const NotificationButton(id: 'testButton', text: 'Test'),
+        // ],
       ),
       iosNotificationOptions: const IOSNotificationOptions(
         showNotification: true,
@@ -107,7 +107,6 @@ class ForegroundApi {
   void _listenCallback(message) {
     if (message is String){
       data.fromJson(jsonDecode(message));
-      print('==========  Per day: ${data.perDay.value}  =========');
       data.getUpdates();
     } else if (message is int){
       print('notify: $message');

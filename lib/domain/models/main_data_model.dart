@@ -1,4 +1,5 @@
 // Main data class
+import 'package:twinkle/domain/models/time_class.dart';
 import 'package:twinkle/domain/models/user_data.dart';
 
 class TwinkleDataModel extends UserData{
@@ -14,9 +15,10 @@ class TwinkleDataModel extends UserData{
       registrationDate = DateTime.parse(json['registrationDate']);
       processState = ProcessState.values[json['processState'] as int];
       extraCigarettesCount = json['extraCigarettesCount'];
-      String timeString = json['firstCigaretteTime']; // ??
-      firstCigaretteTime = DateTime.parse(timeString);
-      print('Process state: $processState');
+      String firstTimeString = json['firstCigaretteTime']; // ??
+      firstCigaretteTime = DayTime.parse(firstTimeString);
+      String lastTimeString = json['lastCigaretteTime']; // ??
+      lastCigaretteTime = DayTime.parse(lastTimeString);
   }
 
   Map<String, dynamic> toJson(){
@@ -30,7 +32,8 @@ class TwinkleDataModel extends UserData{
       'registrationDate' : registrationDate.toString(),
       'processState' : processState.index,
       'extraCigarettesCount' : extraCigarettesCount,
-      'firstCigaretteTime' : firstCigaretteTime.toString()
+      'firstCigaretteTime' : firstCigaretteTime.toString(),
+      'lastCigaretteTime' : lastCigaretteTime.toString()
     };
   }
 }

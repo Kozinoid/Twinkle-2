@@ -14,9 +14,6 @@ class MyTaskHandler extends TaskHandler {
   // Send port
   SendPort? _sendPort;
 
-  // Process state
-  int _eventCount = 0;
-
   // DATA
   final TwinkleDataModel _dataModel = TwinkleDataModel();
 
@@ -29,7 +26,6 @@ class MyTaskHandler extends TaskHandler {
     //
     final json = await FlutterForegroundTask.getData<String>(key: 'twinkleData');
     _dataModel.fromJson(jsonDecode(json!));
-    print('Data model: ${_dataModel.perDay.value}');
   }
 
   //-----------------------------  ON EVENT  -----------------------------------
@@ -37,7 +33,7 @@ class MyTaskHandler extends TaskHandler {
   Future<void> onEvent(DateTime timestamp, SendPort? sendPort) async {
     FlutterForegroundTask.updateService(
         notificationTitle: 'Twinkle',
-        notificationText: 'eventCount: $_eventCount');
+        notificationText: 'Time to next smoke: ${_dataModel.timeToNext}' );
 
     // Next iteration
     _dataModel.calculates();
@@ -45,7 +41,6 @@ class MyTaskHandler extends TaskHandler {
     // Send data to the main isolate.
     _sendPort = sendPort;
     _sendPort?.send(jsonEncode(_dataModel.toJson()));
-    _eventCount++;
   }
 
   //----------------------------  ON DESTROY  ----------------------------------
@@ -56,11 +51,11 @@ class MyTaskHandler extends TaskHandler {
   }
 
   //------------------------  ON BUTTON PRESSED  -------------------------------
-  @override
-  void onButtonPressed(String id) {
-    // Called when the notification button on the Android platform is pressed.
-    print('onButtonPressed >> $id');
-  }
+  // @override
+  // void onButtonPressed(String id) {
+  //   // Called when the notification button on the Android platform is pressed.
+  //   print('onButtonPressed >> $id');
+  // }
 
   //---------------------  ON NOTIFICATION PRESSED  ----------------------------
   @override
