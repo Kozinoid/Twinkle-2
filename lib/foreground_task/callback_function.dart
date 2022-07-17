@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:isolate';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:twinkle/domain/models/main_data_model.dart';
+import 'package:twinkle/foreground_task/process_calculations.dart';
 
 // The callback function should always be a top-level function.
 void startCallback() {
@@ -15,7 +16,7 @@ class MyTaskHandler extends TaskHandler {
   SendPort? _sendPort;
 
   // DATA
-  final TwinkleDataModel _dataModel = TwinkleDataModel();
+  late final TwinkleProcessCalculations _processCalculations;
 
   //-----------------------------  ON START  -----------------------------------
   @override
@@ -24,22 +25,30 @@ class MyTaskHandler extends TaskHandler {
 
     // ......................  load custom data  ...............................
     final json = await FlutterForegroundTask.getData<String>(key: 'twinkleData');
-    _dataModel.fromJson(jsonDecode(json!));
+    final dataModel = TwinkleDataModel()..fromJson(jsonDecode(json!));
+    _processCalculations = TwinkleProcessCalculations(dataModel: dataModel);
+    // .................  Send initial calculation state  ......................
+    // // GET CALCULATION DATA
+    // Map<String, dynamic> calculationMap = _processCalculations.getData();
+    // // Send some notification data to foreground process
+    // _sendPort?.send(jsonEncode(calculationMap));
   }
 
   //-----------------------------  ON EVENT  -----------------------------------
   @override
   Future<void> onEvent(DateTime timestamp, SendPort? sendPort) async {
+    // GET CALCULATION DATA
+    Map<String, dynamic> calculationMap = _processCalculations.getData();
+
+    // Time to next smoke in notification
     FlutterForegroundTask.updateService(
         notificationTitle: 'Twinkle',
-        notificationText: 'Time to next smoke: ${_dataModel.timeToNext}' );
-
-    // Next iteration
-    _dataModel.calculates();
+        notificationText: 'Time to next smoke: ${_processCalculations.timeToNext}' );
 
     // Send data to the main isolate.
     _sendPort = sendPort;
-    _sendPort?.send(jsonEncode(_dataModel.toJson()));
+    // Send some notification data to foreground process
+    _sendPort?.send(jsonEncode(calculationMap));
   }
 
   //----------------------------  ON DESTROY  ----------------------------------

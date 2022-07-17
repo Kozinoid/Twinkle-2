@@ -1,6 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:twinkle/data/repository/twinkle_data_repository.dart';
+import 'package:twinkle/domain/models/time_calculation_data.dart';
+import 'package:twinkle/domain/models/time_class.dart';
 import 'package:twinkle/domain/models/user_data.dart';
 import 'package:twinkle/presentation/cubit/states.dart';
 
@@ -10,6 +14,8 @@ class ModeCubit extends Cubit<TwinkleState>{
   ModeCubit({required this.repository}) : super(TwinkleLoadingState());
 
   final TwinkleDataRepository repository;
+  DayTime timeToNextSmoke = DayTime.empty();
+  double percentageToNextSmoke = 0;
 
   //********************************************* New version *****************************************************
   //           +-(Load data)-+--------------------------+--------------------------------------+
@@ -30,7 +36,7 @@ class ModeCubit extends Cubit<TwinkleState>{
     await Future.delayed(const Duration(seconds: 3));
     loadState();
     bool isRunning = await di.api.isRunning;
-    ProcessState processState = repository.data.processState;
+    ProcessState processState = repository.processState;
     //print('is running: $isRunning, Process state: $processState');
     if (!isRunning && processState == ProcessState.started){
       startProcess();
@@ -54,7 +60,7 @@ class ModeCubit extends Cubit<TwinkleState>{
       case ProcessState.started:
         toMainScreen();
         break;
-      case ProcessState.ended:
+      case ProcessState.finished:
         toCongratulationsPage();
         break;
     }
@@ -77,7 +83,7 @@ class ModeCubit extends Cubit<TwinkleState>{
 
   // To Main screen
   void toMainScreen(){
-    emit(TwinkleProcessingState());
+    emit(TwinkleProcessingState(timeToNextSmoke, percentageToNextSmoke));
   }
 
   // To hot settings screen
@@ -118,5 +124,18 @@ class ModeCubit extends Cubit<TwinkleState>{
     repository.endProcess();
     selectPage();
   }
+
+  void addExtraCigarette(){
+    print('Add cigarette');
+  }
+
+  // void onForegroundEvent(message){
+  //   if (message is String){
+  //     TwinkleTimeCalculationData calculationData = TwinkleTimeCalculationData.fromJson(jsonDecode(message));
+  //     timeToNextSmoke = calculationData.timeToNext;
+  //     percentageToNextSmoke = calculationData.percentToNext;
+  //     toMainScreen();
+  //   }
+  // }
 }
 

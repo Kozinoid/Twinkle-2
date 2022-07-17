@@ -1,4 +1,6 @@
-class DayTime{
+import 'package:equatable/equatable.dart';
+
+class DayTime extends Equatable{
   // Constructor
   DayTime({this.hours = 0, this.minutes = 0});
 
@@ -66,7 +68,6 @@ class DayTime{
     return DayTime.fromMinutes(inMinutes() % interval.inMinutes());
   }
 
-
   // operator >
   bool operator >(DayTime time){
     return (inMinutes() > time.inMinutes());
@@ -93,10 +94,19 @@ class DayTime{
     return DayTime(hours: int.parse(stringList[0]), minutes: int.parse(stringList[1]));
   }
 
+  // static Empty
+  static DayTime empty(){
+    return DayTime(hours: 0, minutes: 0);
+  }
+
   // To String
   @override
   String toString() {
     final m = '$minutes'.padLeft(2, '0');
     return '$hours:$m';
   }
+
+  // Equatable override
+  @override
+  List<Object?> get props => [hours, minutes];
 }

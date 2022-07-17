@@ -4,6 +4,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:twinkle/data/repository/twinkle_data_repository.dart';
 import 'package:twinkle/data/shared_preferences/local_data_storage.dart';
 import 'package:twinkle/domain/models/main_data_model.dart';
+import 'package:twinkle/domain/models/time_calculation_data.dart';
+import 'package:twinkle/domain/models/time_class.dart';
 
 import '../foreground_task/foreground_api.dart';
 import '../presentation/pages/homepage.dart';
@@ -13,6 +15,7 @@ class DIContainer{
   late SharedPreferences preferences;
   late LocalStorage storage;
   late TwinkleDataModel data;
+  late TwinkleTimeCalculationData calculationData;
   late TwinkleDataRepository repository;
   late ForegroundApi api;
 
@@ -29,10 +32,12 @@ class DIContainer{
       print('storage - ok');
       data = TwinkleDataModel();
       print('data - ok');
+      calculationData = TwinkleTimeCalculationData.empty();
+      print('calculation data - ok');
       repository = TwinkleDataRepository(data: data, storage: storage);
       print('repository - ok');
 
-      api = ForegroundApi(data);
+      api = ForegroundApi(calculationData: calculationData);
       print('Add lifecycle observer');
       WidgetsBinding.instance.addObserver(homePage);
       api.initForegroundTask();

@@ -3,13 +3,18 @@ import 'dart:isolate';
 import 'package:flutter/material.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:twinkle/domain/models/main_data_model.dart';
+import 'package:twinkle/domain/models/time_calculation_data.dart';
 import 'callback_function.dart';
 
 class ForegroundApi {
-  ForegroundApi(this.data);
   // Receive port
   ReceivePort? receivePort;
-  TwinkleDataModel data;
+
+  // Initial data
+  TwinkleTimeCalculationData calculationData;
+
+  // Constructor
+  ForegroundApi({required this.calculationData});
 
   // Process status
   Future<bool> get isRunning async =>
@@ -42,7 +47,7 @@ class ForegroundApi {
         playSound: false,
       ),
       foregroundTaskOptions: const ForegroundTaskOptions(
-        interval: 1000,
+        interval: 1000, // <------------------------------- Todo: Set interval 1 minute
         autoRunOnBoot: true,
         allowWifiLock: true,
       ),
@@ -105,8 +110,12 @@ class ForegroundApi {
   //--------------------------  LISTEN CALLBACK  -------------------------------
   void _listenCallback(message) {
     if (message is String){
-      data.fromJson(jsonDecode(message));
-      data.getUpdates();
+
+      // Get data from callback function
+      calculationData.fromJson(jsonDecode(message));
+      // SOME ACTIONS IN FOREGROUND WHEN DATA RECEIVED
+      calculationData.updateCunsumers();
+
     } else if (message is int){
       print('notify: $message');
     }

@@ -7,6 +7,8 @@ import 'package:twinkle/presentation/cubit/states.dart';
 import 'package:twinkle/presentation/pages/settings.dart';
 import 'package:twinkle/presentation/pages/splash.dart';
 
+import '../../domain/models/time_calculation_data.dart';
+import '../../domain/models/time_class.dart';
 import '../../main.dart';
 import 'achivements.dart';
 import 'congratulations.dart';
@@ -49,6 +51,9 @@ class MyHomePage extends StatelessWidget with WidgetsBindingObserver{
 
         //--------------------- Main Data Provider -----------------------------
         ChangeNotifierProvider<TwinkleDataModel>.value(value: di.data),
+
+        //------------- Foreground calculation  provider -----------------------
+        ChangeNotifierProvider<TwinkleTimeCalculationData>.value(value: di.calculationData),
 
       ],
       child: BlocBuilder<ModeCubit, TwinkleState>(

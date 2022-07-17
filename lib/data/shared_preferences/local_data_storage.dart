@@ -1,18 +1,16 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
-const String DATA_KEY = 'TWINKLE_DATA';
-
 class LocalStorage {
   final SharedPreferences preferences;
   LocalStorage({required this.preferences});
 
-  void storePreferences(String data) {
-    preferences.setString(DATA_KEY, data);
+  void storePreferences(String key, String data) {
+    preferences.setString(key, data);
   }
 
-  String getPreferences(){
+  String getPreferences(String key){
     try{
-      String data = preferences.getString(DATA_KEY) ?? '';
+      String data = preferences.getString(key) ?? '';
       return data;
     }
     catch (e){
