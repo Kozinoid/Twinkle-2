@@ -6,13 +6,15 @@ import 'package:twinkle/presentation/cubit/mode_cubit.dart';
 import 'package:twinkle/presentation/cubit/states.dart';
 import 'package:twinkle/presentation/pages/settings.dart';
 import 'package:twinkle/presentation/pages/splash.dart';
+import 'package:twinkle/presentation/pages/wake_up.dart';
 
 import '../../domain/models/time_calculation_data.dart';
-import '../../domain/models/time_class.dart';
 import '../../main.dart';
 import 'achivements.dart';
 import 'congratulations.dart';
+import 'good_night.dart';
 import 'main_process.dart';
+import 'next_cigarette.dart';
 import 'on_board_step_1.dart';
 import 'on_board_step_2.dart';
 
@@ -25,13 +27,8 @@ class MyHomePage extends StatelessWidget with WidgetsBindingObserver{
     super.didChangeAppLifecycleState(state);
     switch(state) {
       case AppLifecycleState.resumed:
-      // TODO: Handle this case.
-        break;
       case AppLifecycleState.inactive:
-      // TODO: Handle this case.
-        break;
       case AppLifecycleState.paused:
-      // TODO: Handle this case.
         break;
       case AppLifecycleState.detached:
         di.api.closeReceivePort();
@@ -47,7 +44,7 @@ class MyHomePage extends StatelessWidget with WidgetsBindingObserver{
       providers: [
 
         //------------------ Cubit for mode switching --------------------------
-        BlocProvider(create: (context) => ModeCubit(repository: di.repository)..initialState(),),
+        BlocProvider<ModeCubit>.value(value: di.cubit),
 
         //--------------------- Main Data Provider -----------------------------
         ChangeNotifierProvider<TwinkleDataModel>.value(value: di.data),
@@ -71,12 +68,17 @@ class MyHomePage extends StatelessWidget with WidgetsBindingObserver{
             return const TwinkleSettings();
           } else if (state is TwinkleAchivementsState) {
             return const TwinkleAchivements();
-          } if (state is TwinkleCongratulationsState) {
+          } else if (state is TwinkleNextCigaretteState) {
+            return const TwinkleNextCigarette();
+          } else if (state is TwinkleWakeUpState) {
+            return const TwinkleWakeUp();
+          } else if (state is TwinkleGoodNightState) {
+            return const TwinkleGoodNight();
+          } else if (state is TwinkleCongratulationsState) {
             return const TwinkleCongratulations();
           } else {
             return Container();
           }
-          return Container();
         },
       ),
     );

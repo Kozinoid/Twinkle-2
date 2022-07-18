@@ -5,8 +5,8 @@ import 'package:provider/provider.dart';
 import '../../domain/models/main_data_model.dart';
 import '../cubit/mode_cubit.dart';
 
-class TwinkleNextCigarette extends StatelessWidget {
-  const TwinkleNextCigarette({Key? key}) : super(key: key);
+class TwinkleGoodNight extends StatelessWidget {
+  const TwinkleGoodNight({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +22,7 @@ class TwinkleNextCigarette extends StatelessWidget {
               child: Column(
                   children: [
                     ElevatedButton(
-                      child: const Text('Next cigarette'),
+                      child: const Text('Goog night!'),
                       onPressed: (){
                         cubit.toMainScreen();
                       },

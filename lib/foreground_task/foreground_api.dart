@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:twinkle/domain/models/main_data_model.dart';
 import 'package:twinkle/domain/models/time_calculation_data.dart';
+import '../domain/models/foreground_notificztions.dart';
+import '../notification_service/notification_flag.dart';
 import 'callback_function.dart';
 
 class ForegroundApi {
@@ -12,6 +14,20 @@ class ForegroundApi {
 
   // Initial data
   TwinkleTimeCalculationData calculationData;
+
+  // Notification callback
+  late void Function(ForegroundNotification notification) onNotification;
+
+  //------------- Notification flags ------------
+  // can smoke
+  NotificationTrigger smokeTime = NotificationTrigger();
+  // wake up
+  NotificationTrigger wakeUpTime = NotificationTrigger();
+  // good night
+  NotificationTrigger goodNightTime = NotificationTrigger();
+  // finish
+  NotificationTrigger finishTime = NotificationTrigger();
+  //---------------------------------------------
 
   // Constructor
   ForegroundApi({required this.calculationData});
@@ -22,7 +38,9 @@ class ForegroundApi {
 
   //-----------------------  INIT FOREGROUND TASK  -----------------------------
   // Future<void> initForegroundTask(BuildContext context) async {
-  Future<void> initForegroundTask() async {
+  Future<void> initForegroundTask(
+      void Function(ForegroundNotification) handler) async {
+    onNotification = handler;
     await FlutterForegroundTask.init(
       androidNotificationOptions: AndroidNotificationOptions(
         channelId: 'notification_channel_id',
@@ -47,7 +65,8 @@ class ForegroundApi {
         playSound: false,
       ),
       foregroundTaskOptions: const ForegroundTaskOptions(
-        interval: 1000, // <------------------------------- Todo: Set interval 1 minute
+        interval: 1000,
+        // <------------------------------- Set interval 1 minute
         autoRunOnBoot: true,
         allowWifiLock: true,
       ),
@@ -75,17 +94,23 @@ class ForegroundApi {
     }
 
     // ........................  save custom data  .............................
-    await FlutterForegroundTask.saveData(key: 'twinkleData', value: jsonEncode(data.toJson()));
+    await FlutterForegroundTask.saveData(
+        key: 'twinkleData', value: jsonEncode(data.toJson()));
 
-    ReceivePort? rPort;
+    bool reqResult;
     if (await FlutterForegroundTask.isRunningService) {
-      rPort = await FlutterForegroundTask.restartService();
+      reqResult = await FlutterForegroundTask.restartService();
     } else {
-      rPort = await FlutterForegroundTask.startService(
+      reqResult = await FlutterForegroundTask.startService(
         notificationTitle: 'Foreground Service is running',
         notificationText: 'Tap to return to the app',
         callback: startCallback,
       );
+    }
+
+    ReceivePort? rPort;
+    if (reqResult) {
+      rPort = await FlutterForegroundTask.receivePort;
     }
     return registerReceivePort(rPort);
   }
@@ -109,14 +134,35 @@ class ForegroundApi {
 
   //--------------------------  LISTEN CALLBACK  -------------------------------
   void _listenCallback(message) {
-    if (message is String){
-
-      // Get data from callback function
+    if (message is String) {
+      // Get data from callback function & Update UI
       calculationData.fromJson(jsonDecode(message));
-      // SOME ACTIONS IN FOREGROUND WHEN DATA RECEIVED
-      calculationData.updateCunsumers();
 
-    } else if (message is int){
+      //----------------------- Is Smoke Time ? -----------------------
+      smokeTime.triggerValue = calculationData.isSmokeTime;
+      if (smokeTime.isNotHandled){
+        onNotification(ForegroundNotification.nextCigarette);
+      }
+
+      //--------------------- Is Wake Up Time ? ----------------------
+      wakeUpTime.triggerValue = calculationData.isWakeUp;
+      if (wakeUpTime.isNotHandled){
+        onNotification(ForegroundNotification.wakeUp);
+      }
+
+      //------------------- Is Good Night Time ? --------------------
+      goodNightTime.triggerValue = calculationData.isGoodNight;
+      if (goodNightTime.isNotHandled){
+        onNotification(ForegroundNotification.goodNight);
+      }
+
+      //---------------------- Is Finished ? -----------------------
+      finishTime.triggerValue = calculationData.isFinished;
+      if (finishTime.isNotHandled){
+        onNotification(ForegroundNotification.finished);
+      }
+
+    } else if (message is int) {
       print('notify: $message');
     }
   }

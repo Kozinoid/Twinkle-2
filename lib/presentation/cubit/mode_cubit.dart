@@ -1,33 +1,31 @@
-import 'dart:convert';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:twinkle/data/repository/twinkle_data_repository.dart';
-import 'package:twinkle/domain/models/time_calculation_data.dart';
 import 'package:twinkle/domain/models/time_class.dart';
-import 'package:twinkle/domain/models/user_data.dart';
+import 'package:twinkle/foreground_task/foreground_api.dart';
 import 'package:twinkle/presentation/cubit/states.dart';
 
-import '../../main.dart';
+import '../../domain/models/foreground_notificztions.dart';
+import '../../domain/models/process_state.dart';
+
+//********************************************* New version *****************************************************
+//           +-(Load data)-+--------------------------+--------------------------------------+
+//           |             |                          |                                      |
+//   (detect process)      |                          |                                      |
+//           |             V                          V                                      V
+//  Splash --+      +-> Stopped -----------------> Started -------> [process] -----------> Ended ----------------+
+//                  | (Store data)               (Store data)                           (Store data)             |
+//                  |      ^                    (start process)                         (end process)            |
+//                  |      |                          |(kill process)                                            |
+//                  |      +--------------------------+                                                          |
+//                  +--------------------------------------------------------------------------------------------+
 
 class ModeCubit extends Cubit<TwinkleState>{
-  ModeCubit({required this.repository}) : super(TwinkleLoadingState());
+  ModeCubit({required this.repository, required this.foregroundApi}) : super(TwinkleLoadingState());
 
   final TwinkleDataRepository repository;
   DayTime timeToNextSmoke = DayTime.empty();
   double percentageToNextSmoke = 0;
-
-  //********************************************* New version *****************************************************
-  //           +-(Load data)-+--------------------------+--------------------------------------+
-  //           |             |                          |                                      |
-  //   (detect process)      |                          |                                      |
-  //           |             V                          V                                      V
-  //  Splash --+      +-> Stopped -----------------> Started -------> [process] -----------> Ended ----------------+
-  //                  | (Store data)               (Store data)                           (Store data)             |
-  //                  |      ^                    (start process)                         (end process)            |
-  //                  |      |                          |(kill process)                                            |
-  //                  |      +--------------------------+                                                          |
-  //                  +--------------------------------------------------------------------------------------------+
+  ForegroundApi foregroundApi;
 
   // Initial state
   void initialState()async{
@@ -35,7 +33,7 @@ class ModeCubit extends Cubit<TwinkleState>{
     toSplashScreen();
     await Future.delayed(const Duration(seconds: 3));
     loadState();
-    bool isRunning = await di.api.isRunning;
+    bool isRunning = await foregroundApi.isRunning;
     ProcessState processState = repository.processState;
     //print('is running: $isRunning, Process state: $processState');
     if (!isRunning && processState == ProcessState.started){
@@ -101,18 +99,33 @@ class ModeCubit extends Cubit<TwinkleState>{
     emit(TwinkleCongratulationsState());
   }
 
+  // To next cigarette
+  void toNextCigarettePage(){
+    emit(TwinkleNextCigaretteState());
+  }
+
+  // To Wake up
+  void toWakeUpPage(){
+    emit(TwinkleWakeUpState());
+  }
+
+  // To good night
+  void toGoodNightPage(){
+    emit(TwinkleGoodNightState());
+  }
+
   // Start process -> to Main screen
   void startProcess() async {
     repository.startProcess();
     selectPage();
     // Start foreground process
-    di.api.startForegroundTask(repository.data);
+    foregroundApi.startForegroundTask(repository.data);
   }
 
   // Reset data -> to Initial Setting screen
   void resetData(){
     // Stop foreground process
-    di.api.stopForegroundTask();
+    foregroundApi.stopForegroundTask();
     // Reset data
     repository.resetAllData();
     // Change page
@@ -125,17 +138,32 @@ class ModeCubit extends Cubit<TwinkleState>{
     selectPage();
   }
 
-  void addExtraCigarette(){
-    print('Add cigarette');
+  void addExtraCigarette() {
+    repository.addExtraCigarette();
   }
 
-  // void onForegroundEvent(message){
-  //   if (message is String){
-  //     TwinkleTimeCalculationData calculationData = TwinkleTimeCalculationData.fromJson(jsonDecode(message));
-  //     timeToNextSmoke = calculationData.timeToNext;
-  //     percentageToNextSmoke = calculationData.percentToNext;
-  //     toMainScreen();
-  //   }
-  // }
+  void onForegroundEvent(ForegroundNotification notification){
+    switch (notification) {
+      case ForegroundNotification.nextCigarette:
+        toNextCigarettePage();
+        // 'Can Smoke' event was handled
+        foregroundApi.smokeTime.handle();  // reset trigger
+        break;
+      case ForegroundNotification.wakeUp:
+        toWakeUpPage();
+        // 'Wake Up' event was handled
+        foregroundApi.wakeUpTime.handle();  // reset trigger
+        break;
+      case ForegroundNotification.goodNight:
+        toGoodNightPage();
+        // 'Good night' event was handled
+        foregroundApi.goodNightTime.handle();  // reset trigger
+        break;
+      case ForegroundNotification.finished:
+        toCongratulationsPage();
+        // 'Finished' event was handled
+        foregroundApi.finishTime.handle();  // reset trigger
+        break;
+    }
+  }
 }
-

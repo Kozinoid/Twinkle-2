@@ -20,7 +20,7 @@ class TwinkleCongratulations extends StatelessWidget {
               child: Column(
                 children: [
                   ElevatedButton(
-                    child: const Text('Thank you!'),
+                    child: const Text('Congratulations!'),
                     onPressed: (){
                       cubit.resetData();
                     },

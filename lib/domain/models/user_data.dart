@@ -3,13 +3,6 @@ import 'package:twinkle/core/types.dart';
 import 'package:equatable/equatable.dart';
 import 'package:twinkle/domain/models/time_class.dart';
 
-// Main States Enum
-enum ProcessState{
-  stopped,
-  started,
-  finished
-}
-
 class UserData extends Equatable with ChangeNotifier {
   // Constructor
   UserData(){

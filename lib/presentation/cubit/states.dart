@@ -18,4 +18,10 @@ class TwinkleSettingsState extends TwinkleState{}
 
 class TwinkleAchivementsState extends TwinkleState{}
 
+class TwinkleNextCigaretteState extends TwinkleState{}
+
+class TwinkleWakeUpState extends TwinkleState{}
+
+class TwinkleGoodNightState extends TwinkleState{}
+
 class TwinkleCongratulationsState extends TwinkleState{}

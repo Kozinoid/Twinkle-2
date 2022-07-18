@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:twinkle/presentation/pages/homepage.dart';
-import 'core/service_locator.dart';
+import 'core/di_container.dart';
 
 //******************************************************************************
 //*                               APP SIDE                                     *

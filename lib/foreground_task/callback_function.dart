@@ -4,6 +4,9 @@ import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:twinkle/domain/models/main_data_model.dart';
 import 'package:twinkle/foreground_task/process_calculations.dart';
 
+import '../notification_service/notification_flag.dart';
+import '../notification_service/notification_service.dart';
+
 // The callback function should always be a top-level function.
 void startCallback() {
   // The setTaskHandler function must be called to handle the task in the background.
@@ -18,10 +21,22 @@ class MyTaskHandler extends TaskHandler {
   // DATA
   late final TwinkleProcessCalculations _processCalculations;
 
+  //------------- Notification flags ------------
+  // can smoke
+  NotificationTrigger smokeTime = NotificationTrigger();
+  // wake up
+  NotificationTrigger wakeUpTime = NotificationTrigger();
+  // good night
+  NotificationTrigger goodNightTime = NotificationTrigger();
+  // finish
+  NotificationTrigger finishTime = NotificationTrigger();
+  //---------------------------------------------
+
   //-----------------------------  ON START  -----------------------------------
   @override
   Future<void> onStart(DateTime timestamp, SendPort? sendPort) async {
     _sendPort = sendPort;
+    await NotificationService().init();
 
     // ......................  load custom data  ...............................
     final json = await FlutterForegroundTask.getData<String>(key: 'twinkleData');
@@ -44,6 +59,35 @@ class MyTaskHandler extends TaskHandler {
     FlutterForegroundTask.updateService(
         notificationTitle: 'Twinkle',
         notificationText: 'Time to next smoke: ${_processCalculations.timeToNext}' );
+
+    //----------------------- Is Smoke Time ? -----------------------
+    smokeTime.triggerValue = _processCalculations.isSmokeTime;
+    if (smokeTime.isNotHandled){
+      NotificationService().showNotifications(id: 1, title: 'Twinkle', body: 'It\' smoke time.', payload: '');
+      smokeTime.handle();
+    }
+
+    //--------------------- Is Wake Up Time ? ----------------------
+    wakeUpTime.triggerValue = _processCalculations.isWakeUp;
+    if (wakeUpTime.isNotHandled){
+      NotificationService().showNotifications(id: 2, title: 'Twinkle', body: 'Good morning!', payload: '');
+      wakeUpTime.handle();
+    }
+
+    //------------------- Is Good Night Time ? --------------------
+    goodNightTime.triggerValue = _processCalculations.isGoodNight;
+    if (goodNightTime.isNotHandled){
+      NotificationService().showNotifications(id: 3, title: 'Twinkle', body: 'Good night!', payload: '');
+      goodNightTime.handle();
+    }
+
+    //---------------------- Is Finished ? -----------------------
+    finishTime.triggerValue = _processCalculations.isFinished;
+    if (finishTime.isNotHandled){
+      NotificationService().showNotifications(id: 4, title: 'Twinkle', body: 'Congratulations!!!', payload: '');
+      finishTime.handle();
+    }
+    //-------------------------------------------------------------
 
     // Send data to the main isolate.
     _sendPort = sendPort;

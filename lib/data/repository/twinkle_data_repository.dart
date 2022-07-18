@@ -3,7 +3,7 @@ import 'package:twinkle/data/shared_preferences/local_data_storage.dart';
 import 'package:twinkle/domain/models/main_data_model.dart';
 import 'package:twinkle/domain/repository/data_repository.dart';
 
-import '../../domain/models/user_data.dart';
+import '../../domain/models/process_state.dart';
 
 const String DATA_KEY = 'TWINKLE_DATA';
 const String PROCESS_KEY = 'TWINKLE_PROCESS';
@@ -45,6 +45,12 @@ class TwinkleDataRepository extends TwinkleRepository{
   // End process
   void endProcess(){
     processState = ProcessState.finished;
+    storeData();
+  }
+
+  //--------------------------  CHANGE DATA  -----------------------------------
+  void addExtraCigarette(){
+    data.extraCigaretteCount++;
     storeData();
   }
 
