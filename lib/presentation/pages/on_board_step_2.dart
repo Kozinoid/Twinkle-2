@@ -29,12 +29,16 @@ class TwinkleOnBoardTwo extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
+
+                //-------------------------- Header ----------------------------
                 TwinkleLabel(
                   data: 'Money',
-                  size: 26,
+                  size: 28,
                   width: MediaQuery.of(context).size.width * 0.9,
                 ),
+
                 const TwinkleSeparator(),
+
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -56,6 +60,7 @@ class TwinkleOnBoardTwo extends StatelessWidget {
                     const TwinkleSeparator(),
                   ],
                 ),
+
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -77,6 +82,7 @@ class TwinkleOnBoardTwo extends StatelessWidget {
                     const TwinkleSeparator(),
                   ],
                 ),
+
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -143,4 +149,3 @@ class TwinkleOnBoardTwo extends StatelessWidget {
     });
   }
 }
-

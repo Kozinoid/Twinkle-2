@@ -1,9 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:twinkle/presentation/widgets/button.dart';
+import 'package:twinkle/presentation/widgets/label.dart';
 
 import '../../domain/models/main_data_model.dart';
 import '../cubit/mode_cubit.dart';
+import '../style/styles.dart';
 
 class TwinkleNextCigarette extends StatelessWidget {
   const TwinkleNextCigarette({Key? key}) : super(key: key);
@@ -17,16 +20,24 @@ class TwinkleNextCigarette extends StatelessWidget {
           return false;
         },
         child: Scaffold(
+          backgroundColor: Utils.YELLOW_COLOR,
           body: SafeArea(
             child: Center(
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    ElevatedButton(
-                      child: const Text('Next cigarette'),
-                      onPressed: (){
-                        cubit.toMainScreen();
-                      },
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 20),
+                      child: Center(child: Image.asset("assets/images/smoke_time_tr.png")),
                     ),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 10),
+                      child: TwinkleLabel(data: 'You can smoke a cigarette', size: 24, width: 300),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      child: TwinkleButton(text: 'Ok', selected: true, size: 30, onPressed: (){cubit.toMainScreen();}),
+                    )
                   ]
               ),
             ),

@@ -40,7 +40,7 @@ dependencies:
   provider: ^6.0.3
   shared_preferences: ^2.0.15
   equatable: ^2.0.3
-  flutter_foreground_task: ^3.8.0
+  flutter_foreground_task: ^3.8.1
   flutter_local_notifications: ^9.7.0
 
 dev_dependencies:
@@ -68,6 +68,10 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/images/splash.jpg
+    - assets/smoke_time_tr.png
+    - assets/morning_tr.png
+    - assets/night_tr.png
+    - assets/finished_tr.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

@@ -31,12 +31,16 @@ class TwinkleOnBoardOne extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
+
+                  //-------------------------- Header ----------------------------
                   TwinkleLabel(
                     data: 'Person data',
-                    size: 26,
+                    size: 28,
                     width: MediaQuery.of(context).size.width * 0.9,
                   ),
+
                   const TwinkleSeparator(),
+
                   Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -57,6 +61,7 @@ class TwinkleOnBoardOne extends StatelessWidget {
                       const TwinkleSeparator(),
                     ],
                   ),
+
                   Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -78,6 +83,7 @@ class TwinkleOnBoardOne extends StatelessWidget {
                       const TwinkleSeparator(),
                     ],
                   ),
+
                   Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
