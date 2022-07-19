@@ -11,6 +11,7 @@ class UserData extends Equatable with ChangeNotifier {
     price.setOnChange(() {notifyListeners();});
     perDay.setOnChange(() {notifyListeners();});
     daysToSmokeBreak.setOnChange(() {notifyListeners();});
+
   }
 
   //------------------------ Registration data ---------------------------------
@@ -40,10 +41,20 @@ class UserData extends Equatable with ChangeNotifier {
   DateTime registrationDate = DateTime.now();
 
   // Start smoke time today
-  DayTime wakeUpTime = DayTime(hours: 7, minutes: 0);
+  DayTime _wakeUpTime = DayTime(hours: 7, minutes: 0);
+  DayTime get wakeUpTime => _wakeUpTime;
+  set wakeUpTime(DayTime value) {
+    _wakeUpTime = value;
+    notifyListeners();
+  }
 
   // Finish smoke time today
-  DayTime goodNightTime = DayTime(hours: 23, minutes: 0);
+  DayTime _goodNightTime = DayTime(hours: 23, minutes: 0);
+  DayTime get goodNightTime => _goodNightTime;
+  set goodNightTime(DayTime value) {
+    _goodNightTime = value;
+    notifyListeners();
+  }
 
   // Extra cigarette count
   int _extraCigaretteCount = 0;

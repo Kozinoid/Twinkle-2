@@ -99,6 +99,21 @@ class DayTime extends Equatable{
     return DayTime(hours: 0, minutes: 0);
   }
 
+  // One minute
+  static DayTime oneMinute(){
+    return DayTime(hours: 0, minutes: 1);
+  }
+
+  // One hour
+  static DayTime oneHour(){
+    return DayTime(hours: 1, minutes: 0);
+  }
+
+  // One day
+  static DayTime oneDay(){
+    return DayTime(hours: 24, minutes: 0);
+  }
+
   // To String
   @override
   String toString() {

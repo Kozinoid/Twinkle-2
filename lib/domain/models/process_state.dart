@@ -2,5 +2,5 @@
 enum ProcessState{
   stopped,
   started,
-  finished
+  //finished
 }

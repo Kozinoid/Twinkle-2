@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:twinkle/domain/models/main_data_model.dart';
 import 'package:twinkle/domain/models/time_calculation_data.dart';
-import '../domain/models/foreground_notificztions.dart';
+import '../domain/models/foreground_notifications.dart';
 import '../notification_service/notification_flag.dart';
 import 'callback_function.dart';
 

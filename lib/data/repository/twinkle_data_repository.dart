@@ -27,7 +27,7 @@ class TwinkleDataRepository extends TwinkleRepository{
     storeProcessState();
   }
 
-  //-------------------------- TREE MAIN CASES ---------------------------------
+  //--------------------------- TWO MAIN CASES ---------------------------------
   // Reset All Data
   void resetAllData(){
     processState = ProcessState.stopped;
@@ -39,12 +39,6 @@ class TwinkleDataRepository extends TwinkleRepository{
   void startProcess(){
     processState = ProcessState.started;
     data.extraCigaretteCount = 0;
-    storeData();
-  }
-
-  // End process
-  void endProcess(){
-    processState = ProcessState.finished;
     storeData();
   }
 

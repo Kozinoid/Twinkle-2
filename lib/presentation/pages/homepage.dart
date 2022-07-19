@@ -17,6 +17,7 @@ import 'main_process.dart';
 import 'next_cigarette.dart';
 import 'on_board_step_1.dart';
 import 'on_board_step_2.dart';
+import 'on_board_step_3.dart';
 
 class MyHomePage extends StatelessWidget with WidgetsBindingObserver{
   const MyHomePage({Key? key}) : super(key: key);
@@ -62,6 +63,8 @@ class MyHomePage extends StatelessWidget with WidgetsBindingObserver{
             return const TwinkleOnBoardOne();
           } else if (state is TwinkleOnBoardTwoState) {
             return const TwinkleOnBoardTwo();
+          } else if (state is TwinkleOnBoardThreeState) {
+            return const TwinkleOnBoardThree();
           } else if (state is TwinkleProcessingState) {
             return const MainProcess();
           } else if (state is TwinkleSettingsState) {
@@ -77,7 +80,7 @@ class MyHomePage extends StatelessWidget with WidgetsBindingObserver{
           } else if (state is TwinkleCongratulationsState) {
             return const TwinkleCongratulations();
           } else {
-            return Container();
+            return const MainProcess();
           }
         },
       ),

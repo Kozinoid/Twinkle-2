@@ -15,7 +15,7 @@ class TwinkleOnBoardOne extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ModeCubit bloc =
+    ModeCubit cubit =
         context.read<ModeCubit>(); //BlocProvider.of<ModeBloc>(context);
     return Consumer<TwinkleDataModel>(
       builder: (context, data, child) {
@@ -31,6 +31,12 @@ class TwinkleOnBoardOne extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
+                  TwinkleLabel(
+                    data: 'Person data',
+                    size: 26,
+                    width: MediaQuery.of(context).size.width * 0.9,
+                  ),
+                  const TwinkleSeparator(),
                   Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -104,7 +110,7 @@ class TwinkleOnBoardOne extends StatelessWidget {
                     width: 30,
                   ),
                   const TwinkleLabel(
-                    data: 'Step 1 of 2',
+                    data: 'Step 1 of 3',
                     size: 24,
                     width: 170,
                   ),
@@ -118,7 +124,7 @@ class TwinkleOnBoardOne extends StatelessWidget {
                     size: 24,
                     width: 100,
                     onPressed: () {
-                      bloc.toOnboardPageTwo();
+                      cubit.toOnboardPageTwo();
                     },
                   ),
                 ],

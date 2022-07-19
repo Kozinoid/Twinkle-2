@@ -8,6 +8,8 @@ class TwinkleOnBoardOneState extends TwinkleState{}
 
 class TwinkleOnBoardTwoState extends TwinkleState{}
 
+class TwinkleOnBoardThreeState extends TwinkleState{}
+
 class TwinkleProcessingState extends TwinkleState{
   TwinkleProcessingState(this.timeToNextSmoke, this.percentageToNextSmoke);
   final DayTime timeToNextSmoke;

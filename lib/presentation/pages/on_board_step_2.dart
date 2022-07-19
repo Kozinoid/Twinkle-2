@@ -29,6 +29,12 @@ class TwinkleOnBoardTwo extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
+                TwinkleLabel(
+                  data: 'Money',
+                  size: 26,
+                  width: MediaQuery.of(context).size.width * 0.9,
+                ),
+                const TwinkleSeparator(),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -54,7 +60,7 @@ class TwinkleOnBoardTwo extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     TwinkleLabel(
-                      data: 'what is the price of 20 cigarettes?',
+                      data: 'What is the price of 20 cigarettes?',
                       size: 24,
                       width: MediaQuery.of(context).size.width * 0.9,
                     ),
@@ -109,27 +115,24 @@ class TwinkleOnBoardTwo extends StatelessWidget {
                   },
                 ),
 
-                // Label 'Step 2 of 2'
                 const TwinkleLabel(
-                  data: 'Step 2 of 2',
+                  data: 'Step 2 of 3',
                   size: 24,
                   width: 170,
                 ),
 
-                // Sized box
+                //Padding(padding: EdgeInsets.symmetric(horizontal: 20),),
                 const SizedBox(
                   width: 70,
                 ),
 
-                //------------------- Save data and Start Process Button ----------------------
                 TwinkleButton(
-                  text: 'Save',
+                  text: 'Next',
                   selected: true,
                   size: 24,
                   width: 100,
                   onPressed: () {
-                    //TwinkleDataModel model = context.read<TwinkleDataModel>();
-                    cubit.startProcess();
+                    cubit.toOnboardPageThree();
                   },
                 ),
               ],
