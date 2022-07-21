@@ -1,6 +1,6 @@
 // Main data class
-import 'package:twinkle/domain/models/time_class.dart';
-import 'package:twinkle/domain/models/user_data.dart';
+import 'package:twinkle/domain/models/day_time_class.dart';
+import 'package:twinkle/domain/models/main_data.dart';
 
 class TwinkleDataModel extends UserData{
   TwinkleDataModel() : super();
@@ -10,7 +10,7 @@ class TwinkleDataModel extends UserData{
       genderIndex = json['gender'] ?? 0;
       currencyIndex = json['currency'] ?? 0;
       price.value = json['price'] ?? 70;
-      perDay.value = json['perDay'] ?? 20;
+      maxPerDay.value = json['perDay'] ?? 20;
       daysToSmokeBreak.value = json['timeForSmokeBreak'] ?? 90;
       registrationDate = DateTime.parse(json['registrationDate'] ?? DateTime.now());
       String firstTimeString = json['firstCigaretteTime'] ?? '07:00';
@@ -18,6 +18,7 @@ class TwinkleDataModel extends UserData{
       String lastTimeString = json['lastCigaretteTime'] ?? '23:00';
       goodNightTime = DayTime.parse(lastTimeString);
       extraCigaretteCount = json['extraCigaretteCount'] ?? 0;
+      extraCigaretteTodayCount = json['extraCigaretteTodayCount'] ?? 0;
   }
 
   Map<String, dynamic> toJson(){
@@ -26,12 +27,13 @@ class TwinkleDataModel extends UserData{
       'gender' : gender.index,
       'currency' : currency.index,
       'price' : price.value,
-      'perDay' : perDay.value,
+      'perDay' : maxPerDay.value,
       'timeForSmokeBreak' : daysToSmokeBreak.value,
       'registrationDate' : registrationDate.toString(),
       'firstCigaretteTime' : wakeUpTime.toString(),
       'lastCigaretteTime' : goodNightTime.toString(),
-      'extraCigaretteCount' : extraCigaretteCount
+      'extraCigaretteCount' : extraCigaretteCount,
+      'extraCigaretteTodayCount' : extraCigaretteTodayCount
     };
   }
 }

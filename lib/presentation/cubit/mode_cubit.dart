@@ -1,12 +1,14 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twinkle/data/repository/twinkle_data_repository.dart';
-import 'package:twinkle/domain/models/time_class.dart';
+import 'package:twinkle/domain/models/day_time_class.dart';
 import 'package:twinkle/foreground_task/foreground_api.dart';
 import 'package:twinkle/presentation/cubit/states.dart';
 
-import '../../domain/models/foreground_notifications.dart';
-import '../../domain/models/process_state.dart';
+import '../../notification_service/foreground_notifications.dart';
+import '../../foreground_task/process_state.dart';
 import '../../notification_service/notification_flag.dart';
+
+const audioAsset = "assets/audio/red-indian-music.mp3";
 
 class ModeCubit extends Cubit<TwinkleState> {
   ModeCubit({required this.repository, required this.foregroundApi})
@@ -132,32 +134,45 @@ class ModeCubit extends Cubit<TwinkleState> {
     selectPage();
   }
 
+  // Change initial data
+  void changeData(){
+    // Save changes
+    repository.changeInitialData();
+    // Send changes to process
+    foregroundApi.sendMessage(repository.data.toJson());
+    // Restart foreground process
+    initialState();
+  }
+
+  // Add extra cigarette
   void addExtraCigarette() {
     repository.addExtraCigarette();
   }
 
-  void onForegroundEvent(ForegroundNotification notification) {
+  // Handle notification from foreground
+  void onForegroundEvent(ForegroundNotification notification) async  {
     receivedEvent.triggerValue = true;
     switch (notification) {
       case ForegroundNotification.nextCigarette:
-        toNextCigarettePage();
         // 'Can Smoke' event was handled
         foregroundApi.handleOuterNotification(ForegroundNotification.nextCigarette); // reset trigger
+        toNextCigarettePage();
         break;
       case ForegroundNotification.wakeUp:
-        toWakeUpPage();
         // 'Wake Up' event was handled
         foregroundApi.handleOuterNotification(ForegroundNotification.wakeUp); // reset trigger
+        toWakeUpPage();
         break;
       case ForegroundNotification.goodNight:
-        toGoodNightPage();
         // 'Good night' event was handled
         foregroundApi.handleOuterNotification(ForegroundNotification.goodNight); // reset trigger
+        repository.resetDailyExtraCigaretteCount();
+        toGoodNightPage();
         break;
       case ForegroundNotification.finished:
-        toCongratulationsPage();
         // 'Finished' event was handled
         foregroundApi.handleOuterNotification(ForegroundNotification.finished); // reset trigger
+        toCongratulationsPage();
         break;
     }
   }

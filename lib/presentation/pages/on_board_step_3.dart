@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:twinkle/domain/models/time_class.dart';
+import 'package:twinkle/domain/models/day_time_class.dart';
 import 'package:twinkle/presentation/dialogs/get_time_dialog.dart';
 
 import '../../domain/models/main_data_model.dart';

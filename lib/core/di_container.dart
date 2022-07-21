@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:twinkle/data/repository/twinkle_data_repository.dart';
 import 'package:twinkle/data/shared_preferences/local_data_storage.dart';
 import 'package:twinkle/domain/models/main_data_model.dart';
-import 'package:twinkle/domain/models/time_calculation_data.dart';
+import 'package:twinkle/foreground_task/data/process_calculation_data.dart';
 import 'package:twinkle/presentation/cubit/mode_cubit.dart';
 
 import '../foreground_task/foreground_api.dart';

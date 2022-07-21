@@ -1,4 +1,4 @@
-import 'package:twinkle/domain/models/time_class.dart';
+import 'package:twinkle/domain/models/day_time_class.dart';
 
 abstract class TwinkleState{}
 

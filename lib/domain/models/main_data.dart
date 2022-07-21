@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:twinkle/core/types.dart';
 import 'package:equatable/equatable.dart';
-import 'package:twinkle/domain/models/time_class.dart';
+import 'package:twinkle/domain/models/day_time_class.dart';
 
 class UserData extends Equatable with ChangeNotifier {
   // Constructor
@@ -9,7 +9,7 @@ class UserData extends Equatable with ChangeNotifier {
     // Set onChange handlers for all fields
     age.setOnChange((){notifyListeners();});
     price.setOnChange(() {notifyListeners();});
-    perDay.setOnChange(() {notifyListeners();});
+    maxPerDay.setOnChange(() {notifyListeners();});
     daysToSmokeBreak.setOnChange(() {notifyListeners();});
 
   }
@@ -32,7 +32,7 @@ class UserData extends Equatable with ChangeNotifier {
   LimitedIntCounter price = LimitedIntCounter(value: 50, min: 1, max: 1000);
 
   // Cigarette count per day
-  LimitedIntCounter perDay = LimitedIntCounter(value: 20, min: 1, max: 100);
+  LimitedIntCounter maxPerDay = LimitedIntCounter(value: 20, min: 1, max: 100);
 
   // How fast user wants to stop smoking
   LimitedIntCounter daysToSmokeBreak = LimitedIntCounter(value: 90, min: 1, max: 1000);
@@ -64,8 +64,16 @@ class UserData extends Equatable with ChangeNotifier {
     notifyListeners();
   }
 
+  // Extra cigarette TODAY count
+  int _extraCigaretteTodayCount = 0;
+  int get extraCigaretteTodayCount => _extraCigaretteCount;
+  set extraCigaretteTodayCount(int value) {
+    _extraCigaretteTodayCount = value;
+    notifyListeners();
+  }
+
   // Equatable override
   @override
-  List<Object?> get props => [age, _gender, _currency, price, perDay, daysToSmokeBreak, registrationDate,
-    wakeUpTime, goodNightTime, _extraCigaretteCount];
+  List<Object?> get props => [age, _gender, _currency, price, maxPerDay, daysToSmokeBreak, registrationDate,
+    wakeUpTime, goodNightTime, _extraCigaretteCount, _extraCigaretteTodayCount];
 }

@@ -2,9 +2,9 @@ import 'dart:convert';
 import 'dart:isolate';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:twinkle/domain/models/main_data_model.dart';
-import 'package:twinkle/foreground_task/process_calculations.dart';
+import 'package:twinkle/foreground_task/data/process_calculations.dart';
 
-import '../domain/models/foreground_notifications.dart';
+import '../notification_service/foreground_notifications.dart';
 import '../notification_service/notification_flag.dart';
 import '../notification_service/notification_service.dart';
 
@@ -63,7 +63,7 @@ class MyTaskHandler extends TaskHandler {
   //----------------  Listen for main process side messages  -------------------
   void _listenCallback(message){
     if (message is int){
-      print('RECEIVE FROM MAIN: $message');
+      //print('RECEIVE FROM MAIN: $message');
       ForegroundNotification notification = ForegroundNotification.values[message];
       switch (notification) {
         case ForegroundNotification.nextCigarette:
@@ -79,9 +79,13 @@ class MyTaskHandler extends TaskHandler {
           finishTime.outerHandle();
           break;
       }
-    } else {
-      print('RECEIVE FROM MAIN: $message');
+    } else if (message is Map<String, dynamic>){
+      //print('JSON: $message');
+      _processCalculations.loadJson(message);
     }
+    // else{
+    //   print('RECEIVED FROM MAIN: $message');
+    // }
   }
 
   //-----------------------------  ON EVENT  -----------------------------------

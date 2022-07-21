@@ -3,7 +3,7 @@ import 'package:twinkle/data/shared_preferences/local_data_storage.dart';
 import 'package:twinkle/domain/models/main_data_model.dart';
 import 'package:twinkle/domain/repository/data_repository.dart';
 
-import '../../domain/models/process_state.dart';
+import '../../foreground_task/process_state.dart';
 
 const String DATA_KEY = 'TWINKLE_DATA';
 const String PROCESS_KEY = 'TWINKLE_PROCESS';
@@ -32,6 +32,7 @@ class TwinkleDataRepository extends TwinkleRepository{
   void resetAllData(){
     processState = ProcessState.stopped;
     data.extraCigaretteCount = 0;
+    data.extraCigaretteTodayCount = 0;
     storeData();
   }
 
@@ -39,12 +40,26 @@ class TwinkleDataRepository extends TwinkleRepository{
   void startProcess(){
     processState = ProcessState.started;
     data.extraCigaretteCount = 0;
+    data.extraCigaretteTodayCount = 0;
+    data.registrationDate = DateTime.now();
     storeData();
   }
 
   //--------------------------  CHANGE DATA  -----------------------------------
   void addExtraCigarette(){
     data.extraCigaretteCount++;
+    data.extraCigaretteTodayCount++;
+    storeData();
+  }
+
+  //----------------  RESET DAILY EXTRA CIGARETTE COUNT  -----------------------
+  void resetDailyExtraCigaretteCount(){
+    data.extraCigaretteTodayCount = 0;
+    storeData();
+  }
+
+  //-----------------------  CHANGE INITIAL DATA  ------------------------------
+  void changeInitialData(){
     storeData();
   }
 

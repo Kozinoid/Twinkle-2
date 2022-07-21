@@ -1,24 +1,30 @@
 import 'package:twinkle/domain/models/main_data_model.dart';
 
-import '../domain/models/time_calculation_data.dart';
-import '../domain/models/time_class.dart';
+import 'process_calculation_data.dart';
+import '../../domain/models/day_time_class.dart';
 
 class TwinkleProcessCalculations {
   TwinkleProcessCalculations({required this.dataModel}) {
     // Minus cigarette per day (double!)
     minusCigarettePerDay =
-        dataModel.perDay.value / dataModel.daysToSmokeBreak.value;
+        dataModel.maxPerDay.value / dataModel.daysToSmokeBreak.value;
   }
 
   TwinkleDataModel dataModel;
-  double minusCigarettePerDay = 0;
+
+  double minusCigarettePerDay = 0; // Minus per EVERY DAY
   DayTime timeToNext = DayTime.empty(); // Time to next smoke
   double percentToNext = 0; // Percentage of process
   int totalCigarettesToday = 0; // Max cigarettes today
+  int passedCigarettesToday = 0; // Passed up to current time
   bool isSmokeTime = false;
   bool isFinished = false;
   bool isWakeUp = false;
   bool isGoodNight = false;
+
+  void loadJson(Map<String, dynamic> map){
+    dataModel.fromJson(map);
+  }
 
   // Time calculation
   Map<String, dynamic> getData() {
@@ -29,11 +35,10 @@ class TwinkleProcessCalculations {
     // get current day
     int currentDay = now.difference(dataModel.registrationDate).inDays;
 
-    // Cigarette count, saved today
-    int savedCigarettesToday = (currentDay * minusCigarettePerDay).floor();
-
     // Max cigarette count today
-    totalCigarettesToday = dataModel.perDay.value - savedCigarettesToday;
+    totalCigarettesToday =
+        ((dataModel.daysToSmokeBreak.value - currentDay) * minusCigarettePerDay)
+            .ceil();
 
     // Time between cigarette smoke
     DayTime interval = (dataModel.goodNightTime - dataModel.wakeUpTime) /
@@ -49,17 +54,19 @@ class TwinkleProcessCalculations {
     DayTime nextTime;
 
     if ((dataModel.wakeUpTime < timeNow) && (timeNow < lastCigaretteTime)) {
-      int passedCigarettesToday = (timeNow - dataModel.wakeUpTime) ~/ interval;
+      passedCigarettesToday = (timeNow - dataModel.wakeUpTime) ~/ interval;
       nextTime = interval * (passedCigarettesToday + 1) + dataModel.wakeUpTime;
       timeToNext = nextTime - timeNow;
       percentToNext = timeToNext.inMinutes() / interval.inMinutes();
     } else if (timeNow >= lastCigaretteTime) {
+      passedCigarettesToday = totalCigarettesToday;
       nextTime = dataModel.wakeUpTime + interval;
       timeToNext = nextTime + DayTime.parse('24:00') - timeNow;
       percentToNext = timeToNext.inMinutes() /
           (nextTime + DayTime.parse('24:00') - lastCigaretteTime).inMinutes();
     } else {
       //if (dataModel.wakeUpTime >= timeNow)
+      passedCigarettesToday = 0;
       nextTime = dataModel.wakeUpTime + interval;
       timeToNext = nextTime - timeNow;
       percentToNext = timeToNext.inMinutes() /
@@ -68,7 +75,7 @@ class TwinkleProcessCalculations {
     }
 
     isSmokeTime = false;
-    if ((firstCigaretteTime <= timeNow) && (timeNow <= lastCigaretteTime)){
+    if ((firstCigaretteTime <= timeNow) && (timeNow <= lastCigaretteTime)) {
       // if it's time to smoke
       if ((timeNow - dataModel.wakeUpTime) % interval == DayTime.empty()) {
         // Send 'Can smoke'
@@ -94,6 +101,7 @@ class TwinkleProcessCalculations {
             timeToNext: timeToNext,
             percentToNext: percentToNext,
             totalCigarettesToday: totalCigarettesToday,
+            passedCigarettesToday: passedCigarettesToday,
             isSmokeTime: isSmokeTime,
             isFinished: isFinished,
             isWakeUp: isWakeUp,

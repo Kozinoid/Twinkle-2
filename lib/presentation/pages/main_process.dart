@@ -6,7 +6,7 @@ import 'package:twinkle/presentation/dialogs/confirm_dialog.dart';
 import 'package:twinkle/presentation/style/styles.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import '../../domain/models/time_calculation_data.dart';
+import '../../foreground_task/data/process_calculation_data.dart';
 
 class MainProcess extends StatelessWidget {
   const MainProcess({Key? key}) : super(key: key);
@@ -19,7 +19,8 @@ class MainProcess extends StatelessWidget {
     return Consumer<TwinkleTimeCalculationData>(
         builder: (context, calculationData, child) {
       return Consumer<TwinkleDataModel>(
-        builder: (context, data, child) => WillPopScope(
+        builder: (context, data, child) =>
+            WillPopScope(
           onWillPop: () async {
             return await showConfirmDialog(context,
                 title: 'Do you really want to exit?');
@@ -77,10 +78,10 @@ class MainProcess extends StatelessWidget {
                       ),
                     ),
                     //---------------  Time remaining before next cigarette  ----------------
-                    Text('Extra cigarettes: ${data.extraCigaretteCount}',
+                    Text('Extra cigarettes today: ${data.extraCigaretteTodayCount}',
                         textAlign: TextAlign.start,
                         style: Utils.getWhiteOnOrangeStyle(size: 20)),
-                    Text('Max cigarettes today: ${calculationData.totalCigarettesToday}',
+                    Text('Cigarettes today: ${calculationData.passedCigarettesToday + data.extraCigaretteTodayCount}/${calculationData.totalCigarettesToday}',
                         textAlign: TextAlign.start,
                         style: Utils.getWhiteOnOrangeStyle(size: 20)),
                   ],

@@ -1,10 +1,11 @@
 import 'dart:convert';
 import 'dart:isolate';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:twinkle/domain/models/main_data_model.dart';
-import 'package:twinkle/domain/models/time_calculation_data.dart';
-import '../domain/models/foreground_notifications.dart';
+import 'package:twinkle/foreground_task/data/process_calculation_data.dart';
+import '../notification_service/foreground_notifications.dart';
 import 'callback_function.dart';
 
 class ForegroundApi {
@@ -20,17 +21,6 @@ class ForegroundApi {
   // Notification callback
   late void Function(ForegroundNotification notification) onNotification;
 
-  // //------------- Notification flags ------------
-  // // can smoke
-  // NotificationTrigger smokeTime = NotificationTrigger();
-  // // wake up
-  // NotificationTrigger wakeUpTime = NotificationTrigger();
-  // // good night
-  // NotificationTrigger goodNightTime = NotificationTrigger();
-  // // finish
-  // NotificationTrigger finishTime = NotificationTrigger();
-  // //---------------------------------------------
-
   // Constructor
   ForegroundApi({required this.calculationData});
 
@@ -38,8 +28,13 @@ class ForegroundApi {
   Future<bool> get isRunning async =>
       await FlutterForegroundTask.isRunningService;
 
+  // Audioplayer
+  AudioPlayer player = AudioPlayer();
+
+  // Audio asset
+  String audioAsset = 'audio/bell.mp3';
+
   //-----------------------  INIT FOREGROUND TASK  -----------------------------
-  // Future<void> initForegroundTask(BuildContext context) async {
   Future<void> initForegroundTask(
       void Function(ForegroundNotification) handler) async {
     onNotification = handler;
@@ -179,8 +174,9 @@ class ForegroundApi {
   }
 
   //---------------------  HANDLE OUTER NOTIFICATION  --------------------------
-  void handleOuterNotification(ForegroundNotification notification){
+  void handleOuterNotification(ForegroundNotification notification)async{
     sendMessage(notification.index);
+    await player.play(AssetSource(audioAsset));
   }
 
   //----------------  Send message to the callback side  -----------------------

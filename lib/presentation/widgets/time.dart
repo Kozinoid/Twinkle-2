@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:twinkle/presentation/widgets/counter.dart';
 import 'package:twinkle/presentation/widgets/label.dart';
 
-import '../../domain/models/time_class.dart';
+import '../../domain/models/day_time_class.dart';
 import '../style/styles.dart';
 
 class TwinkleTime extends StatelessWidget {

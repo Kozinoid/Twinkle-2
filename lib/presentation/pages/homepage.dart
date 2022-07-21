@@ -8,7 +8,7 @@ import 'package:twinkle/presentation/pages/settings.dart';
 import 'package:twinkle/presentation/pages/splash.dart';
 import 'package:twinkle/presentation/pages/wake_up.dart';
 
-import '../../domain/models/time_calculation_data.dart';
+import '../../foreground_task/data/process_calculation_data.dart';
 import '../../main.dart';
 import 'achivements.dart';
 import 'congratulations.dart';

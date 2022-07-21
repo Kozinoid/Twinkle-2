@@ -50,11 +50,11 @@ class TwinkleOnBoardTwo extends StatelessWidget {
                     TwinkleCounter(
                       size: 20,
                       width: 200,
-                      min: data.perDay.min,
-                      max: data.perDay.max,
-                      value: data.perDay.value,
+                      min: data.maxPerDay.min,
+                      max: data.maxPerDay.max,
+                      value: data.maxPerDay.value,
                       onChange: (differance) {
-                        data.perDay.value += differance;
+                        data.maxPerDay.value += differance;
                       },
                     ),
                     const TwinkleSeparator(),

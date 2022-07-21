@@ -1,12 +1,13 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:twinkle/domain/models/time_class.dart';
+import 'package:twinkle/domain/models/day_time_class.dart';
 
 class TwinkleTimeCalculationData extends Equatable with ChangeNotifier {
   TwinkleTimeCalculationData(
       {required this.timeToNext,
       required this.percentToNext,
       required this.totalCigarettesToday,
+      required this.passedCigarettesToday,
       required this.isSmokeTime,
       required this.isFinished,
       required this.isWakeUp,
@@ -14,7 +15,8 @@ class TwinkleTimeCalculationData extends Equatable with ChangeNotifier {
 
   DayTime timeToNext; // Time to next smoke
   double percentToNext; // Percentage of process
-  int totalCigarettesToday;
+  int totalCigarettesToday; // Max cigarettes today
+  int passedCigarettesToday; // Passed up to current time
   bool isSmokeTime;
   bool isFinished;
   bool isWakeUp;
@@ -25,6 +27,7 @@ class TwinkleTimeCalculationData extends Equatable with ChangeNotifier {
         timeToNext: DayTime.empty(),
         percentToNext: 0,
         totalCigarettesToday: 0,
+        passedCigarettesToday: 0,
         isSmokeTime: false,
         isFinished: false,
         isWakeUp: false,
@@ -40,6 +43,7 @@ class TwinkleTimeCalculationData extends Equatable with ChangeNotifier {
     timeToNext = DayTime.fromJson(map['timeToNext']);
     percentToNext = map['percentToNext'];
     totalCigarettesToday = map['totalCigarettesToday'];
+    passedCigarettesToday = map['passedCigarettesToday'];
     isSmokeTime = map['isSmokeTime'];
     isFinished = map['isFinished'];
     isWakeUp = map['isWakeUp'];
@@ -51,7 +55,8 @@ class TwinkleTimeCalculationData extends Equatable with ChangeNotifier {
     return {
       'timeToNext': timeToNext.toJson(),
       'percentToNext': percentToNext,
-      'totalCigarettesToday' : totalCigarettesToday,
+      'totalCigarettesToday': totalCigarettesToday,
+      'passedCigarettesToday': passedCigarettesToday,
       'isSmokeTime': isSmokeTime,
       'isFinished': isFinished,
       'isWakeUp': isWakeUp,
@@ -61,7 +66,14 @@ class TwinkleTimeCalculationData extends Equatable with ChangeNotifier {
 
   // Equatable override
   @override
-  // TODO: implement props
-  List<Object?> get props =>
-      [timeToNext, percentToNext, isSmokeTime, isFinished, totalCigarettesToday];
+  List<Object?> get props => [
+        timeToNext,
+        percentToNext,
+        totalCigarettesToday,
+        passedCigarettesToday,
+        isSmokeTime,
+        isWakeUp,
+        isGoodNight,
+        isFinished
+      ];
 }

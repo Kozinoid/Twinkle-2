@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:twinkle/domain/models/time_class.dart';
+import 'package:twinkle/domain/models/day_time_class.dart';
 import 'package:twinkle/presentation/widgets/button.dart';
 
 import '../style/styles.dart';
