@@ -142,22 +142,22 @@ class ModeCubit extends Cubit<TwinkleState> {
       case ForegroundNotification.nextCigarette:
         toNextCigarettePage();
         // 'Can Smoke' event was handled
-        foregroundApi.smokeTime.handle(); // reset trigger
+        foregroundApi.handleOuterNotification(ForegroundNotification.nextCigarette); // reset trigger
         break;
       case ForegroundNotification.wakeUp:
         toWakeUpPage();
         // 'Wake Up' event was handled
-        foregroundApi.wakeUpTime.handle(); // reset trigger
+        foregroundApi.handleOuterNotification(ForegroundNotification.wakeUp); // reset trigger
         break;
       case ForegroundNotification.goodNight:
         toGoodNightPage();
         // 'Good night' event was handled
-        foregroundApi.goodNightTime.handle(); // reset trigger
+        foregroundApi.handleOuterNotification(ForegroundNotification.goodNight); // reset trigger
         break;
       case ForegroundNotification.finished:
         toCongratulationsPage();
         // 'Finished' event was handled
-        foregroundApi.finishTime.handle(); // reset trigger
+        foregroundApi.handleOuterNotification(ForegroundNotification.finished); // reset trigger
         break;
     }
   }

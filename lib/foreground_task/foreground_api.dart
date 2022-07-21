@@ -5,12 +5,14 @@ import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:twinkle/domain/models/main_data_model.dart';
 import 'package:twinkle/domain/models/time_calculation_data.dart';
 import '../domain/models/foreground_notifications.dart';
-import '../notification_service/notification_flag.dart';
 import 'callback_function.dart';
 
 class ForegroundApi {
   // Receive port
   ReceivePort? receivePort;
+
+  // Send port
+  SendPort? sendPort;
 
   // Initial data
   TwinkleTimeCalculationData calculationData;
@@ -18,16 +20,16 @@ class ForegroundApi {
   // Notification callback
   late void Function(ForegroundNotification notification) onNotification;
 
-  //------------- Notification flags ------------
-  // can smoke
-  NotificationTrigger smokeTime = NotificationTrigger();
-  // wake up
-  NotificationTrigger wakeUpTime = NotificationTrigger();
-  // good night
-  NotificationTrigger goodNightTime = NotificationTrigger();
-  // finish
-  NotificationTrigger finishTime = NotificationTrigger();
-  //---------------------------------------------
+  // //------------- Notification flags ------------
+  // // can smoke
+  // NotificationTrigger smokeTime = NotificationTrigger();
+  // // wake up
+  // NotificationTrigger wakeUpTime = NotificationTrigger();
+  // // good night
+  // NotificationTrigger goodNightTime = NotificationTrigger();
+  // // finish
+  // NotificationTrigger finishTime = NotificationTrigger();
+  // //---------------------------------------------
 
   // Constructor
   ForegroundApi({required this.calculationData});
@@ -121,12 +123,12 @@ class ForegroundApi {
   }
 
   //----------------------  REGISTER RECEIVE PORT  -----------------------------
-  bool registerReceivePort(ReceivePort? receivePort) {
+  bool registerReceivePort(ReceivePort? rPort) {
     closeReceivePort();
     print('Open receive port');
-    if (receivePort != null) {
-      receivePort = receivePort;
-      receivePort.listen(_listenCallback);
+    if (rPort != null) {
+      receivePort = rPort;
+      rPort.listen(_listenCallback);
       return true;
     }
     return false;
@@ -134,36 +136,38 @@ class ForegroundApi {
 
   //--------------------------  LISTEN CALLBACK  -------------------------------
   void _listenCallback(message) {
-    if (message is String) {
+      if (message is SendPort){
+        // get send port from callback side
+        sendPort = message;
+        //print('Foreground: Send port was received!');
+      } else if (message is String) {
+
       // Get data from callback function & Update UI
       calculationData.fromJson(jsonDecode(message));
 
       //----------------------- Is Smoke Time ? -----------------------
-      smokeTime.triggerValue = calculationData.isSmokeTime;
-      if (smokeTime.isNotHandled){
+      if (calculationData.isSmokeTime){
         onNotification(ForegroundNotification.nextCigarette);
       }
 
       //--------------------- Is Wake Up Time ? ----------------------
-      wakeUpTime.triggerValue = calculationData.isWakeUp;
-      if (wakeUpTime.isNotHandled){
+      if (calculationData.isWakeUp){
         onNotification(ForegroundNotification.wakeUp);
       }
 
       //------------------- Is Good Night Time ? --------------------
-      goodNightTime.triggerValue = calculationData.isGoodNight;
-      if (goodNightTime.isNotHandled){
+      if (calculationData.isGoodNight){
         onNotification(ForegroundNotification.goodNight);
       }
 
       //---------------------- Is Finished ? -----------------------
-      finishTime.triggerValue = calculationData.isFinished;
-      if (finishTime.isNotHandled){
+      if (calculationData.isFinished){
         onNotification(ForegroundNotification.finished);
       }
 
     } else if (message is int) {
       print('notify: $message');
+      sendMessage('main -> callback: $message');
     }
   }
 
@@ -172,5 +176,17 @@ class ForegroundApi {
     receivePort?.close();
     receivePort = null;
     print('Close receive port');
+  }
+
+  //---------------------  HANDLE OUTER NOTIFICATION  --------------------------
+  void handleOuterNotification(ForegroundNotification notification){
+    sendMessage(notification.index);
+  }
+
+  //----------------  Send message to the callback side  -----------------------
+  void sendMessage(message){
+    if (sendPort != null){
+      sendPort?.send(message);
+    }
   }
 }

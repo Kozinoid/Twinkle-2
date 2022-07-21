@@ -4,6 +4,7 @@ import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:twinkle/domain/models/main_data_model.dart';
 import 'package:twinkle/foreground_task/process_calculations.dart';
 
+import '../domain/models/foreground_notifications.dart';
 import '../notification_service/notification_flag.dart';
 import '../notification_service/notification_service.dart';
 
@@ -18,35 +19,69 @@ class MyTaskHandler extends TaskHandler {
   // Send port
   SendPort? _sendPort;
 
+  // Receive port
+  ReceivePort? _receivePort;
+
   // DATA
   late final TwinkleProcessCalculations _processCalculations;
 
   //------------- Notification flags ------------
   // can smoke
-  NotificationTrigger smokeTime = NotificationTrigger();
+  NotificationDualTrigger smokeTime = NotificationDualTrigger();
   // wake up
-  NotificationTrigger wakeUpTime = NotificationTrigger();
+  NotificationDualTrigger wakeUpTime = NotificationDualTrigger();
   // good night
-  NotificationTrigger goodNightTime = NotificationTrigger();
+  NotificationDualTrigger goodNightTime = NotificationDualTrigger();
   // finish
-  NotificationTrigger finishTime = NotificationTrigger();
+  NotificationDualTrigger finishTime = NotificationDualTrigger();
   //---------------------------------------------
 
   //-----------------------------  ON START  -----------------------------------
   @override
   Future<void> onStart(DateTime timestamp, SendPort? sendPort) async {
+    // get send port
     _sendPort = sendPort;
+    // create receive port
+    _receivePort = ReceivePort();
+    // subscribe for listen messages from the main process side
+    _receivePort?.listen(_listenCallback);
+    // send the SendPort to main side
+    _sendPort?.send(_receivePort?.sendPort);
+    print('Sending receive port');
+    if (_receivePort == null) {print('ReceivePort = null');}
+    else if (_receivePort?.sendPort == null){print('ReceivePort.sendPort = null');}
+
+    // Init notifications
     await NotificationService().init();
 
     // ......................  load custom data  ...............................
     final json = await FlutterForegroundTask.getData<String>(key: 'twinkleData');
     final dataModel = TwinkleDataModel()..fromJson(jsonDecode(json!));
     _processCalculations = TwinkleProcessCalculations(dataModel: dataModel);
-    // .................  Send initial calculation state  ......................
-    // // GET CALCULATION DATA
-    // Map<String, dynamic> calculationMap = _processCalculations.getData();
-    // // Send some notification data to foreground process
-    // _sendPort?.send(jsonEncode(calculationMap));
+  }
+
+  //----------------  Listen for main process side messages  -------------------
+  void _listenCallback(message){
+    if (message is int){
+      print('RECEIVE FROM MAIN: $message');
+      ForegroundNotification notification = ForegroundNotification.values[message];
+      switch (notification) {
+        case ForegroundNotification.nextCigarette:
+          smokeTime.outerHandle();
+          break;
+        case ForegroundNotification.wakeUp:
+          wakeUpTime.outerHandle();
+          break;
+        case ForegroundNotification.goodNight:
+          goodNightTime.outerHandle();
+          break;
+        case ForegroundNotification.finished:
+          finishTime.outerHandle();
+          break;
+      }
+    } else {
+      print('RECEIVE FROM MAIN: $message');
+    }
   }
 
   //-----------------------------  ON EVENT  -----------------------------------
@@ -60,37 +95,24 @@ class MyTaskHandler extends TaskHandler {
         notificationTitle: 'Twinkle',
         notificationText: 'Time to next smoke: ${_processCalculations.timeToNext}' );
 
-    //----------------------- Is Smoke Time ? -----------------------
-    smokeTime.triggerValue = _processCalculations.isSmokeTime;
-    if (smokeTime.isNotHandled){
-      NotificationService().showNotifications(id: 1, title: 'Twinkle', body: 'It\' smoke time.', payload: '');
-      smokeTime.handle();
-    }
+    // Handle callback notifications
+    handleCallbackNotifications();
 
-    //--------------------- Is Wake Up Time ? ----------------------
-    wakeUpTime.triggerValue = _processCalculations.isWakeUp;
-    if (wakeUpTime.isNotHandled){
-      NotificationService().showNotifications(id: 2, title: 'Twinkle', body: 'Good morning!', payload: '');
-      wakeUpTime.handle();
-    }
-
-    //------------------- Is Good Night Time ? --------------------
-    goodNightTime.triggerValue = _processCalculations.isGoodNight;
-    if (goodNightTime.isNotHandled){
-      NotificationService().showNotifications(id: 3, title: 'Twinkle', body: 'Good night!', payload: '');
-      goodNightTime.handle();
-    }
-
-    //---------------------- Is Finished ? -----------------------
-    finishTime.triggerValue = _processCalculations.isFinished;
-    if (finishTime.isNotHandled){
-      NotificationService().showNotifications(id: 4, title: 'Twinkle', body: 'Congratulations!!!', payload: '');
-      finishTime.handle();
-    }
-    //-------------------------------------------------------------
+    //print('BEFORE: $calculationMap');
+    // Refresh outer handle statuses
+    calculationMap['isSmokeTime'] = smokeTime.outerIsNotHandled;
+    calculationMap['isWakeUp'] = wakeUpTime.outerIsNotHandled;
+    calculationMap['isGoodNight'] = goodNightTime.outerIsNotHandled;
+    calculationMap['isFinished'] = finishTime.outerIsNotHandled;
+    //print('AFTER: $calculationMap');
 
     // Send data to the main isolate.
     _sendPort = sendPort;
+
+    //--------------------------------------------------------------------------
+    _sendPort?.send(_receivePort?.sendPort);
+    //--------------------------------------------------------------------------
+
     // Send some notification data to foreground process
     _sendPort?.send(jsonEncode(calculationMap));
   }
@@ -98,6 +120,8 @@ class MyTaskHandler extends TaskHandler {
   //----------------------------  ON DESTROY  ----------------------------------
   @override
   Future<void> onDestroy(DateTime timestamp, SendPort? sendPort) async {
+    _receivePort?.close();
+    _receivePort = null;
     // You can use the clearAllData function to clear all the stored data.
     await FlutterForegroundTask.clearAllData();
   }
@@ -122,5 +146,41 @@ class MyTaskHandler extends TaskHandler {
     // signal it to restore state when the app is already started.
     FlutterForegroundTask.launchApp('/');
     _sendPort?.send(101);
+  }
+
+  //--------------------  HANDLE CALLBACK NOTIFICATIONS  -----------------------
+  void handleCallbackNotifications(){
+    //----------------------- Is Smoke Time ? -----------------------
+    smokeTime.triggerValue = _processCalculations.isSmokeTime;
+    if (smokeTime.innerIsNotHandled){
+      NotificationService().showNotifications(id: 1, title: 'Twinkle', body: 'It\' smoke time.', payload: '');
+      smokeTime.innerHandle();
+    }
+    //_processCalculations.isSmokeTime = smokeTime.outerIsNotHandled;
+
+    //--------------------- Is Wake Up Time ? ----------------------
+    wakeUpTime.triggerValue = _processCalculations.isWakeUp;
+    if (wakeUpTime.innerIsNotHandled){
+      NotificationService().showNotifications(id: 2, title: 'Twinkle', body: 'Good morning!', payload: '');
+      wakeUpTime.innerHandle();
+    }
+    //_processCalculations.isWakeUp = wakeUpTime.outerIsNotHandled;
+
+    //------------------- Is Good Night Time ? --------------------
+    goodNightTime.triggerValue = _processCalculations.isGoodNight;
+    if (goodNightTime.innerIsNotHandled){
+      NotificationService().showNotifications(id: 3, title: 'Twinkle', body: 'Good night!', payload: '');
+      goodNightTime.innerHandle();
+    }
+    //_processCalculations.isGoodNight = goodNightTime.outerIsNotHandled;
+
+    //---------------------- Is Finished ? -----------------------
+    finishTime.triggerValue = _processCalculations.isFinished;
+    if (finishTime.innerIsNotHandled){
+      NotificationService().showNotifications(id: 4, title: 'Twinkle', body: 'Congratulations!!!', payload: '');
+      finishTime.innerHandle();
+    }
+    //_processCalculations.isFinished = finishTime.outerIsNotHandled;
+    //-------------------------------------------------------------
   }
 }
