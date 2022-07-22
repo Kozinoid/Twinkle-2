@@ -28,17 +28,23 @@ class TwinkleProcessCalculations {
 
   // Time calculation
   Map<String, dynamic> getData() {
-    // Current day
+    // Now
     DateTime now = DateTime.now();
     // Current time
     DayTime timeNow = DayTime(hours: now.hour, minutes: now.minute);
-    // get current day
+    // Current day
     int currentDay = now.difference(dataModel.registrationDate).inDays;
 
     // Max cigarette count today
     totalCigarettesToday =
         ((dataModel.daysToSmokeBreak.value - currentDay) * minusCigarettePerDay)
             .ceil();
+
+    // If process is finished
+    if (totalCigarettesToday == 0) {
+      print('LAST DAY');
+      isFinished = true;
+    }
 
     // Time between cigarette smoke
     DayTime interval = (dataModel.goodNightTime - dataModel.wakeUpTime) /
@@ -54,17 +60,25 @@ class TwinkleProcessCalculations {
     DayTime nextTime;
 
     if ((dataModel.wakeUpTime < timeNow) && (timeNow < lastCigaretteTime)) {
+      //............. Day time between first and last cigarette ................
       passedCigarettesToday = (timeNow - dataModel.wakeUpTime) ~/ interval;
       nextTime = interval * (passedCigarettesToday + 1) + dataModel.wakeUpTime;
       timeToNext = nextTime - timeNow;
       percentToNext = timeToNext.inMinutes() / interval.inMinutes();
     } else if (timeNow >= lastCigaretteTime) {
+      //.................. Time after last cigarette ...........................
+      // if it was last day
+      if ((currentDay + 1) >= dataModel.daysToSmokeBreak.value){
+        print('LAST CIGARETTE');
+        isFinished = true;
+      }
       passedCigarettesToday = totalCigarettesToday;
       nextTime = dataModel.wakeUpTime + interval;
       timeToNext = nextTime + DayTime.parse('24:00') - timeNow;
       percentToNext = timeToNext.inMinutes() /
           (nextTime + DayTime.parse('24:00') - lastCigaretteTime).inMinutes();
     } else {
+      //................... Time before first cigarette ........................
       //if (dataModel.wakeUpTime >= timeNow)
       passedCigarettesToday = 0;
       nextTime = dataModel.wakeUpTime + interval;

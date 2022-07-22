@@ -10,6 +10,8 @@ import 'package:twinkle/presentation/widgets/radio_list.dart';
 import 'package:twinkle/presentation/widgets/separator.dart';
 import 'package:twinkle/presentation/style/styles.dart';
 
+import '../../main.dart';
+
 class TwinkleOnBoardOne extends StatelessWidget {
   const TwinkleOnBoardOne({Key? key}) : super(key: key);
 
@@ -34,18 +36,41 @@ class TwinkleOnBoardOne extends StatelessWidget {
 
                   //-------------------------- Header ----------------------------
                   TwinkleLabel(
-                    data: 'Person data',
+                    data: di.localization.page1Header,
                     size: 28,
                     width: MediaQuery.of(context).size.width * 0.9,
                   ),
 
                   const TwinkleSeparator(),
 
+                  // ---------- Language ------------
                   Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       TwinkleLabel(
-                        data: 'What is your gender?',
+                        data: di.localization.languageString,
+                        size: 24,
+                        width: MediaQuery.of(context).size.width * 0.9,
+                      ),
+                      TwinkleRadioList(
+                        values: data.language.values,
+                        value: data.language.index,
+                        width: MediaQuery.of(context).size.width * 0.7,
+                        size: 20,
+                        onChange: (value) {
+                          cubit.setLanguage(value);
+                        },
+                      ),
+                      const TwinkleSeparator(),
+                    ],
+                  ),
+
+                  //----------- Gender --------------
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      TwinkleLabel(
+                        data: di.localization.genderString,
                         size: 24,
                         width: MediaQuery.of(context).size.width * 0.9,
                       ),
@@ -62,11 +87,12 @@ class TwinkleOnBoardOne extends StatelessWidget {
                     ],
                   ),
 
+                  //------------- Age --------------
                   Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       TwinkleLabel(
-                        data: 'How old are you?',
+                        data: di.localization.ageString,
                         size: 24,
                         width: MediaQuery.of(context).size.width * 0.9,
                       ),
@@ -84,12 +110,12 @@ class TwinkleOnBoardOne extends StatelessWidget {
                     ],
                   ),
 
+                  //-------------- Total days ----------------
                   Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       TwinkleLabel(
-                        data:
-                            'During how many days do you want to quit smoking?',
+                        data: di.localization.totalTimeString,
                         size: 24,
                         width: MediaQuery.of(context).size.width * 0.9,
                       ),
@@ -109,6 +135,8 @@ class TwinkleOnBoardOne extends StatelessWidget {
                 ],
               ),
             )),
+
+            //=============================  ROOTER BUTTONS  ===================================
             persistentFooterButtons: [
               Row(
                 children: [

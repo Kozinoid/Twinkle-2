@@ -9,20 +9,20 @@ import 'package:twinkle/presentation/widgets/radio_list.dart';
 import 'package:twinkle/presentation/dialogs/confirm_dialog.dart';
 import 'package:twinkle/presentation/style/styles.dart';
 
-import '../../domain/models/day_time_class.dart';
 import '../dialogs/get_time_dialog.dart';
+import '../../main.dart';
 
 class TwinkleSettings extends StatelessWidget {
   const TwinkleSettings({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    ModeCubit bloc =
+    ModeCubit cubit =
         context.read<ModeCubit>(); //BlocProvider.of<ModeBloc>(context);
     return Consumer<TwinkleDataModel>(builder: (context, data, child) {
       return WillPopScope(
         onWillPop: () async {
-          bloc.toMainScreen();
+          cubit.toMainScreen();
           return false;
         },
         child: Scaffold(
@@ -30,12 +30,12 @@ class TwinkleSettings extends StatelessWidget {
             leading: BackButton(
               color: Utils.WHITE_COLOR,
               onPressed: () {
-                bloc.toMainScreen();
+                cubit.toMainScreen();
               },
             ),
             backgroundColor: Utils.DARK_BLUE_COLOR,
             title: Text(
-              'settings',
+              di.localization.settingsString,
               style: Utils.getStyle(
                 size: 20,
                 fontWeight: FontWeight.bold,
@@ -60,8 +60,8 @@ class TwinkleSettings extends StatelessWidget {
                   children: [
                     //........................ Gender ..........................
                     getTableRow(
-                        const TwinkleLabel(
-                          data: 'Gender:',
+                        TwinkleLabel(
+                          data: di.localization.settingsGender,
                           size: 20,
                           width: 150,
                           align: TextAlign.end,
@@ -74,8 +74,8 @@ class TwinkleSettings extends StatelessWidget {
                         )),
                     //......................... Age ............................
                     getTableRow(
-                      const TwinkleLabel(
-                        data: 'Age:',
+                      TwinkleLabel(
+                        data: di.localization.settingsAge,
                         size: 20,
                         width: 150,
                         align: TextAlign.end,
@@ -93,8 +93,8 @@ class TwinkleSettings extends StatelessWidget {
                     ),
                     //........................ Price ...........................
                     getTableRow(
-                      const TwinkleLabel(
-                        data: 'Price:',
+                      TwinkleLabel(
+                        data: di.localization.settingsPrice,
                         size: 20,
                         width: 150,
                         align: TextAlign.end,
@@ -112,8 +112,8 @@ class TwinkleSettings extends StatelessWidget {
                     ),
                     //....................... Per day ..........................
                     getTableRow(
-                      const TwinkleLabel(
-                        data: 'Per day at start:',
+                      TwinkleLabel(
+                        data: di.localization.settingsPerDay,
                         size: 20,
                         width: 150,
                         align: TextAlign.end,
@@ -131,8 +131,8 @@ class TwinkleSettings extends StatelessWidget {
                     ),
                     //...................... Total days ........................
                     getTableRow(
-                      const TwinkleLabel(
-                        data: 'Total days:',
+                      TwinkleLabel(
+                        data: di.localization.settingsTotalDays,
                         size: 20,
                         width: 150,
                         align: TextAlign.end,
@@ -150,8 +150,8 @@ class TwinkleSettings extends StatelessWidget {
                     ),
                     //..................... WakeUp time ........................
                     getTableRow(
-                      const TwinkleLabel(
-                        data: 'Wake up time:',
+                      TwinkleLabel(
+                        data: di.localization.settingsWakeUp,
                         size: 20,
                         width: 150,
                         align: TextAlign.end,
@@ -163,29 +163,19 @@ class TwinkleSettings extends StatelessWidget {
                           onPressed: () async {
                             // Dialog:  Get Wake up time
                             var value =
-                            await getDayTime(context, time: data.wakeUpTime);
-                            //--------- Validate time ---------
-                            if (value != null) {
-                              // If dialog result = ok (null - cancel)
-                              // Wake up time must be < 23:00, min differance between wake up and good night - 1 hour
-                              if (value >= DayTime(hours: 23, minutes: 0)) {
-                                value = DayTime(
-                                    hours: 22, minutes: 59); // max wake up time
-                              }
-                              DayTime time = data.goodNightTime;
+                              await getDayTime(context, time: data.wakeUpTime);
+
+                            // Validation was encapsulated in TwinkleMainData
+                            if (value != null){
                               data.wakeUpTime = value;
-                              if (time - value < DayTime.oneHour()) {
-                                //... min differance between wake up and good night - 1 hour
-                                time = value + DayTime.oneHour();
-                              }
-                              data.goodNightTime = time;
                             }
+
                           }),
                     ),
                     //..................... GoodNight Time .....................
                     getTableRow(
-                      const TwinkleLabel(
-                        data: 'Good night time:',
+                      TwinkleLabel(
+                        data: di.localization.settingsGoodNight,
                         size: 20,
                         width: 150,
                         align: TextAlign.end,
@@ -198,29 +188,20 @@ class TwinkleSettings extends StatelessWidget {
                             // Dialog:  Get Wake up time
                             var value = await getDayTime(context,
                                 time: data.goodNightTime);
-                            //--------- Validate time ---------
-                            if (value != null) {
-                              // Good night time must be > 01:00, min differance between wake up and good night - 1 hour
-                              if (value < DayTime(hours: 1, minutes: 0)) {
-                                value = DayTime(
-                                    hours: 1, minutes: 0); // min good night time
-                              }
-                              DayTime time = data.wakeUpTime;
+
+                            // Validation was encapsulated in TwinkleMainData
+                            if (value != null){
                               data.goodNightTime = value;
-                              if (value - time < DayTime.oneHour()) {
-                                //... min differance between wake up and good night - 1 hour
-                                time = value - DayTime.oneHour();
-                              }
-                              data.wakeUpTime = time;
                             }
+
                           }),
                     ),
                   ],
                 ),
                 //........................ Currency ............................
                 getRow(
-                    const TwinkleLabel(
-                      data: 'Currency:',
+                    TwinkleLabel(
+                      data: di.localization.settingsCurrency,
                       size: 20,
                       width: 150,
                       align: TextAlign.end,
@@ -238,55 +219,65 @@ class TwinkleSettings extends StatelessWidget {
                     10),
                 //......................... Language ...........................
                 getRow(
-                    const TwinkleLabel(
-                      data: 'Language:',
+                    TwinkleLabel(
+                      data: di.localization.settingsLanguage,
                       size: 20,
                       width: 150,
                       align: TextAlign.end,
                     ),
                     TwinkleRadioList(
-                      values: const ['Eng', 'Rus'],
-                      value: 0,
-                      width: 180,
-                      size: 20,
-                      onChange: (value) {},
+                      values: data.language.values,
+                      value: data.language.index,
+                      width: MediaQuery.of(context).size.width * 0.5,
+                      size: 16,
+                      onChange: (value) {
+                        cubit.setLanguage(value);
+                      },
                     ),
                     10,
                     10),
+
+              ],
+            ),
+          )),
+          persistentFooterButtons: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
                 //...................... Save changes ..........................
                 TwinkleButton(
-                  text: 'save changes',
+                  text: 'save',
                   selected: true,
                   size: 24,
-                  width: 250,
+                  width: 100,
                   onPressed: () async {
                     bool result = await showConfirmDialog(context,
                         title: 'Do you really want to change initial data?');
                     //print('result = $result');
                     if (result) {
-                      bloc.changeData();
+                      cubit.changeData();
+                    }
+                  },
+                ),
+                //.......................... Divider ...........................
+                const SizedBox(width: 10,),
+                //.........................  RESET ALL  ........................
+                TwinkleButton(
+                  text: 'clear all data',
+                  selected: true,
+                  size: 24,
+                  width: 250,
+                  onPressed: () async {
+                    bool result = await showConfirmDialog(context,
+                        title: 'Do you really want to clear all data?');
+                    //print('result = $result');
+                    if (result) {
+                      cubit.resetData();
                     }
                   },
                 ),
               ],
-            ),
-          )),
-          persistentFooterButtons: [
-            //.........................  RESET ALL  ............................
-            TwinkleButton(
-              text: 'clear all data',
-              selected: true,
-              size: 24,
-              width: 250,
-              onPressed: () async {
-                bool result = await showConfirmDialog(context,
-                    title: 'Do you really want to clear all data?');
-                //print('result = $result');
-                if (result) {
-                  bloc.resetData();
-                }
-              },
-            ),
+            )
           ],
         ),
       );

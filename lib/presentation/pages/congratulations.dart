@@ -35,7 +35,7 @@ class TwinkleCongratulations extends StatelessWidget {
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 10),
-                      child: TwinkleButton(text: 'Ok', selected: true, size: 30, onPressed: (){cubit.toMainScreen();}),
+                      child: TwinkleButton(text: 'Ok', selected: true, size: 30, onPressed: (){cubit.resetData();}),
                     )
                   ]
               ),

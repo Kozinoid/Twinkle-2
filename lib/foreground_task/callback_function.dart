@@ -33,7 +33,7 @@ class MyTaskHandler extends TaskHandler {
   // good night
   NotificationDualTrigger goodNightTime = NotificationDualTrigger();
   // finish
-  NotificationDualTrigger finishTime = NotificationDualTrigger();
+  //NotificationDualTrigger finishTime = NotificationDualTrigger();
   //---------------------------------------------
 
   //-----------------------------  ON START  -----------------------------------
@@ -76,7 +76,7 @@ class MyTaskHandler extends TaskHandler {
           goodNightTime.outerHandle();
           break;
         case ForegroundNotification.finished:
-          finishTime.outerHandle();
+          // finishTime.outerHandle();
           break;
       }
     } else if (message is Map<String, dynamic>){
@@ -107,7 +107,7 @@ class MyTaskHandler extends TaskHandler {
     calculationMap['isSmokeTime'] = smokeTime.outerIsNotHandled;
     calculationMap['isWakeUp'] = wakeUpTime.outerIsNotHandled;
     calculationMap['isGoodNight'] = goodNightTime.outerIsNotHandled;
-    calculationMap['isFinished'] = finishTime.outerIsNotHandled;
+    //calculationMap['isFinished'] = finishTime.outerIsNotHandled;
     //print('AFTER: $calculationMap');
 
     // Send data to the main isolate.
@@ -179,11 +179,11 @@ class MyTaskHandler extends TaskHandler {
     //_processCalculations.isGoodNight = goodNightTime.outerIsNotHandled;
 
     //---------------------- Is Finished ? -----------------------
-    finishTime.triggerValue = _processCalculations.isFinished;
-    if (finishTime.innerIsNotHandled){
-      NotificationService().showNotifications(id: 4, title: 'Twinkle', body: 'Congratulations!!!', payload: '');
-      finishTime.innerHandle();
-    }
+    // finishTime.triggerValue = _processCalculations.isFinished;
+    // if (finishTime.innerIsNotHandled){
+    //   NotificationService().showNotifications(id: 4, title: 'Twinkle', body: 'Congratulations!!!', payload: '');
+    //   finishTime.innerHandle();
+    // }
     //_processCalculations.isFinished = finishTime.outerIsNotHandled;
     //-------------------------------------------------------------
   }

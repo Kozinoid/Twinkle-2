@@ -9,6 +9,8 @@ import 'package:twinkle/presentation/widgets/radio_list.dart';
 import 'package:twinkle/presentation/widgets/separator.dart';
 import 'package:twinkle/presentation/style/styles.dart';
 
+import '../../main.dart';
+
 class TwinkleOnBoardTwo extends StatelessWidget {
   const TwinkleOnBoardTwo({Key? key}) : super(key: key);
 
@@ -32,18 +34,19 @@ class TwinkleOnBoardTwo extends StatelessWidget {
 
                 //-------------------------- Header ----------------------------
                 TwinkleLabel(
-                  data: 'Money',
+                  data: di.localization.page2Header,
                   size: 28,
                   width: MediaQuery.of(context).size.width * 0.9,
                 ),
 
                 const TwinkleSeparator(),
 
+                //------------------ Per day ---------------------
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     TwinkleLabel(
-                      data: 'How many cigarettes do you smoke a day?',
+                      data: di.localization.perDayString,
                       size: 24,
                       width: MediaQuery.of(context).size.width * 0.9,
                     ),
@@ -61,11 +64,12 @@ class TwinkleOnBoardTwo extends StatelessWidget {
                   ],
                 ),
 
+                //------------------ Price ---------------------
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     TwinkleLabel(
-                      data: 'What is the price of 20 cigarettes?',
+                      data: di.localization.priceString,
                       size: 24,
                       width: MediaQuery.of(context).size.width * 0.9,
                     ),
@@ -83,11 +87,12 @@ class TwinkleOnBoardTwo extends StatelessWidget {
                   ],
                 ),
 
+                //------------------ Currency ---------------------
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     TwinkleLabel(
-                      data: 'What is your currency?',
+                      data: di.localization.currencyString,
                       size: 24,
                       width: MediaQuery.of(context).size.width * 0.9,
                     ),

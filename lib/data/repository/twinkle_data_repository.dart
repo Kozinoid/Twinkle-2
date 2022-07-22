@@ -7,7 +7,7 @@ import '../../foreground_task/process_state.dart';
 
 const String DATA_KEY = 'TWINKLE_DATA';
 const String PROCESS_KEY = 'TWINKLE_PROCESS';
-const String EXTRA_KEY = 'TWINKLE_EXTRA';
+const String LANGUAGE_KEY = 'TWINKLE_LANGUAGE';
 
 class TwinkleDataRepository extends TwinkleRepository{
   TwinkleDataRepository({required this.data, required this.storage});
@@ -27,6 +27,16 @@ class TwinkleDataRepository extends TwinkleRepository{
     storeProcessState();
   }
 
+  // Language
+  int get languageIndex{
+    loadLanguage();
+    return data.language.index;
+  }
+  set languageIndex (int index) {
+    data.languageIndex = index;
+    storeLanguage();
+  }
+
   //--------------------------- TWO MAIN CASES ---------------------------------
   // Reset All Data
   void resetAllData(){
@@ -41,7 +51,14 @@ class TwinkleDataRepository extends TwinkleRepository{
     processState = ProcessState.started;
     data.extraCigaretteCount = 0;
     data.extraCigaretteTodayCount = 0;
-    data.registrationDate = DateTime.now();
+    DateTime now = DateTime.now();
+    data.registrationDate = DateTime(now.year, now.month, now.day); // It registration date hours = 0, minutes = 0 etc.
+    storeData();
+  }
+
+  // Restart process
+  void restartProcess(){
+    processState = ProcessState.started;
     storeData();
   }
 
@@ -67,7 +84,7 @@ class TwinkleDataRepository extends TwinkleRepository{
   //------------- DATA -------------
   @override
   void loadData() {
-    String loadedData =  storage.getPreferences(DATA_KEY);
+    String loadedData = storage.getPreferences(DATA_KEY);
     if (loadedData != ''){
       data.fromJson(json.decode(loadedData));
     }
@@ -81,7 +98,7 @@ class TwinkleDataRepository extends TwinkleRepository{
   //----------- PROCESS ------------
   @override
   void loadProcessState() {
-    String loadedData =  storage.getPreferences(PROCESS_KEY);
+    String loadedData = storage.getPreferences(PROCESS_KEY);
     if (loadedData != ''){
       final loadedJson = json.decode(loadedData);
       _processState = ProcessState.values[loadedJson['processState'] as int];
@@ -98,4 +115,27 @@ class TwinkleDataRepository extends TwinkleRepository{
       }
     ));
   }
+
+  //------------ LANGUAGE ------------
+  @override
+  void loadLanguage() {
+    String loadedData = storage.getPreferences(LANGUAGE_KEY);
+    if (loadedData != ''){
+      final loadedJson = json.decode(loadedData);
+      data.languageIndex = loadedJson['language'] as int;
+    }else{
+      data.languageIndex = 0;
+    }
+  }
+
+  @override
+  void storeLanguage() {
+    storage.storePreferences(LANGUAGE_KEY, json.encode(
+        {
+          'language' : data.language.index
+        }
+    ));
+  }
+
+
 }

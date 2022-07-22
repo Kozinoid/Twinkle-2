@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:twinkle/domain/models/day_time_class.dart';
 import 'package:twinkle/presentation/dialogs/get_time_dialog.dart';
 
 import '../../domain/models/main_data_model.dart';
+import '../../main.dart';
 import '../cubit/mode_cubit.dart';
 import '../style/styles.dart';
 import '../widgets/button.dart';
@@ -32,7 +32,7 @@ class TwinkleOnBoardThree extends StatelessWidget {
               children: [
                 //-------------------------- Header ----------------------------
                 TwinkleLabel(
-                  data: 'Schedule',
+                  data: di.localization.page3Header,
                   size: 28,
                   width: MediaQuery.of(context).size.width * 0.9,
                 ),
@@ -44,7 +44,7 @@ class TwinkleOnBoardThree extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     TwinkleLabel(
-                      data: 'Your \'wake up\' time?',
+                      data: di.localization.wakeUpString,
                       size: 24,
                       width: MediaQuery.of(context).size.width * 0.9,
                     ),
@@ -59,22 +59,12 @@ class TwinkleOnBoardThree extends StatelessWidget {
                           // Dialog:  Get Wake up time
                           var value =
                               await getDayTime(context, time: data.wakeUpTime);
-                          //--------- Validate time ---------
-                          if (value != null) {
-                            // If dialog result = ok (null - cancel)
-                            // Wake up time must be < 23:00, min differance between wake up and good night - 1 hour
-                            if (value >= DayTime(hours: 23, minutes: 0)) {
-                              value = DayTime(
-                                  hours: 22, minutes: 59); // max wake up time
-                            }
-                            DayTime time = data.goodNightTime;
+
+                          // Validation was encapsulated in TwinkleMainData
+                          if (value != null){
                             data.wakeUpTime = value;
-                            if (time - value < DayTime.oneHour()) {
-                              //... min differance between wake up and good night - 1 hour
-                              time = value + DayTime.oneHour();
-                            }
-                            data.goodNightTime = time;
                           }
+
                         }),
                     const SizedBox(
                       height: 20,
@@ -88,7 +78,7 @@ class TwinkleOnBoardThree extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     TwinkleLabel(
-                      data: 'Your \'good night\' time?',
+                      data: di.localization.goodNightString,
                       size: 24,
                       width: MediaQuery.of(context).size.width * 0.9,
                     ),
@@ -103,21 +93,12 @@ class TwinkleOnBoardThree extends StatelessWidget {
                           // Dialog:  Get Wake up time
                           var value = await getDayTime(context,
                               time: data.goodNightTime);
-                          //--------- Validate time ---------
-                          if (value != null) {
-                            // Good night time must be > 01:00, min differance between wake up and good night - 1 hour
-                            if (value < DayTime(hours: 1, minutes: 0)) {
-                              value = DayTime(
-                                  hours: 1, minutes: 0); // min good night time
-                            }
-                            DayTime time = data.wakeUpTime;
+
+                          // Validation was encapsulated in TwinkleMainData
+                          if (value != null){
                             data.goodNightTime = value;
-                            if (value - time < DayTime.oneHour()) {
-                              //... min differance between wake up and good night - 1 hour
-                              time = value - DayTime.oneHour();
-                            }
-                            data.wakeUpTime = time;
                           }
+
                         }),
                     const SizedBox(
                       height: 20,

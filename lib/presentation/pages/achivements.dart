@@ -52,6 +52,16 @@ class TwinkleAchivements extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     TwinkleLabel(
+                      data: 'Current day: ${calculator.currentDay} of ${data.daysToSmokeBreak.value}',
+                      size: 24,
+                      width: MediaQuery.of(context).size.width,
+                    ),
+                    TwinkleLabel(
+                      data: 'Start date: ${data.registrationDateString}',
+                      size: 24,
+                      width: MediaQuery.of(context).size.width,
+                    ),
+                    TwinkleLabel(
                       data: 'Quit smoking: ${calculator.percentToFinish}%',
                       size: 24,
                       width: MediaQuery.of(context).size.width,

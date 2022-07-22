@@ -8,6 +8,8 @@ import 'package:twinkle/foreground_task/data/process_calculation_data.dart';
 import 'package:twinkle/presentation/cubit/mode_cubit.dart';
 
 import '../foreground_task/foreground_api.dart';
+import '../localization/localEn.dart';
+import '../localization/localization.dart';
 import '../presentation/pages/homepage.dart';
 
 class DIContainer{
@@ -18,6 +20,7 @@ class DIContainer{
   late TwinkleDataRepository repository;
   late ModeCubit cubit;
   late ForegroundApi api;
+  Localization localization = LocalizationEn();
 
   // ambiguity
   T? ambiguity<T>(T? value) => value;
