@@ -156,21 +156,24 @@ class TwinkleSettings extends StatelessWidget {
                         width: 150,
                         align: TextAlign.end,
                       ),
-                      TwinkleButton(
-                          text: '${data.wakeUpTime}',
-                          selected: true,
-                          size: 30,
-                          onPressed: () async {
-                            // Dialog:  Get Wake up time
-                            var value =
-                              await getDayTime(context, time: data.wakeUpTime);
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 5),
+                        child: TwinkleButton(
+                            text: '${data.wakeUpTime}',
+                            selected: true,
+                            size: 30,
+                            onPressed: () async {
+                              // Dialog:  Get Wake up time
+                              var value =
+                                await getDayTime(context, time: data.wakeUpTime);
 
-                            // Validation was encapsulated in TwinkleMainData
-                            if (value != null){
-                              data.wakeUpTime = value;
-                            }
+                              // Validation was encapsulated in TwinkleMainData
+                              if (value != null){
+                                data.wakeUpTime = value;
+                              }
 
-                          }),
+                            }),
+                      ),
                     ),
                     //..................... GoodNight Time .....................
                     getTableRow(
@@ -180,21 +183,24 @@ class TwinkleSettings extends StatelessWidget {
                         width: 150,
                         align: TextAlign.end,
                       ),
-                      TwinkleButton(
-                          text: '${data.goodNightTime}',
-                          selected: true,
-                          size: 30,
-                          onPressed: () async {
-                            // Dialog:  Get Wake up time
-                            var value = await getDayTime(context,
-                                time: data.goodNightTime);
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 5),
+                        child: TwinkleButton(
+                            text: '${data.goodNightTime}',
+                            selected: true,
+                            size: 30,
+                            onPressed: () async {
+                              // Dialog:  Get Wake up time
+                              var value = await getDayTime(context,
+                                  time: data.goodNightTime);
 
-                            // Validation was encapsulated in TwinkleMainData
-                            if (value != null){
-                              data.goodNightTime = value;
-                            }
+                              // Validation was encapsulated in TwinkleMainData
+                              if (value != null){
+                                data.goodNightTime = value;
+                              }
 
-                          }),
+                            }),
+                      ),
                     ),
                   ],
                 ),

@@ -100,7 +100,10 @@ class ForegroundApi {
 
     ReceivePort? rPort;
     if (reqResult) {
+      print('Foreground: ReceivePort - ok!');
       rPort = await FlutterForegroundTask.receivePort;
+    } else {
+      print('Foreground: ReceivePort = null');
     }
     return registerReceivePort(rPort);
   }
@@ -127,7 +130,7 @@ class ForegroundApi {
       if (message is SendPort){
         // get send port from callback side
         sendPort = message;
-        //print('Foreground: Send port was received!');
+        print('Foreground: Send port was received!');
       } else if (message is String) {
 
       // Get data from callback function & Update UI

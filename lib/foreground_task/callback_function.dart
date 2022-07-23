@@ -28,10 +28,13 @@ class MyTaskHandler extends TaskHandler {
   //------------- Notification flags ------------
   // can smoke
   NotificationDualTrigger smokeTime = NotificationDualTrigger();
+
   // wake up
   NotificationDualTrigger wakeUpTime = NotificationDualTrigger();
+
   // good night
   NotificationDualTrigger goodNightTime = NotificationDualTrigger();
+
   // finish
   //NotificationDualTrigger finishTime = NotificationDualTrigger();
   //---------------------------------------------
@@ -39,32 +42,34 @@ class MyTaskHandler extends TaskHandler {
   //-----------------------------  ON START  -----------------------------------
   @override
   Future<void> onStart(DateTime timestamp, SendPort? sendPort) async {
-    // get send port
+    //                          < get send port >
     _sendPort = sendPort;
+
+    //                      < Init notifications >
+    await NotificationService().init();
+
+    //                       < load custom data >
+    final json =
+        await FlutterForegroundTask.getData<String>(key: 'twinkleData');
+    final dataModel = TwinkleDataModel()..fromJson(jsonDecode(json!));
+    _processCalculations = TwinkleProcessCalculations(dataModel: dataModel);
+
+    //                  < Create stream to foreground >
     // create receive port
     _receivePort = ReceivePort();
     // subscribe for listen messages from the main process side
     _receivePort?.listen(_listenCallback);
-    // send the SendPort to main side
-    _sendPort?.send(_receivePort?.sendPort);
-    print('Sending receive port');
-    if (_receivePort == null) {print('ReceivePort = null');}
-    else if (_receivePort?.sendPort == null){print('ReceivePort.sendPort = null');}
 
-    // Init notifications
-    await NotificationService().init();
-
-    // ......................  load custom data  ...............................
-    final json = await FlutterForegroundTask.getData<String>(key: 'twinkleData');
-    final dataModel = TwinkleDataModel()..fromJson(jsonDecode(json!));
-    _processCalculations = TwinkleProcessCalculations(dataModel: dataModel);
+    // Send Receive port
+    await sendReceivePortToBackground();
   }
 
   //----------------  Listen for main process side messages  -------------------
-  void _listenCallback(message){
-    if (message is int){
+  void _listenCallback(message) {
+    if (message is int) {
       //print('RECEIVE FROM MAIN: $message');
-      ForegroundNotification notification = ForegroundNotification.values[message];
+      ForegroundNotification notification =
+          ForegroundNotification.values[message];
       switch (notification) {
         case ForegroundNotification.nextCigarette:
           smokeTime.outerHandle();
@@ -79,7 +84,7 @@ class MyTaskHandler extends TaskHandler {
           // finishTime.outerHandle();
           break;
       }
-    } else if (message is Map<String, dynamic>){
+    } else if (message is Map<String, dynamic>) {
       //print('JSON: $message');
       _processCalculations.loadJson(message);
     }
@@ -91,34 +96,52 @@ class MyTaskHandler extends TaskHandler {
   //-----------------------------  ON EVENT  -----------------------------------
   @override
   Future<void> onEvent(DateTime timestamp, SendPort? sendPort) async {
+    //            < Send port to foreground every iteration >
+    // Send data to the main isolate.
+    _sendPort = sendPort;
+    // Send Receive port
+    await sendReceivePortToBackground();
+
+    //        < Send some notification data to foreground process >
     // GET CALCULATION DATA
     Map<String, dynamic> calculationMap = _processCalculations.getData();
 
     // Time to next smoke in notification
     FlutterForegroundTask.updateService(
         notificationTitle: 'Twinkle',
-        notificationText: 'Time to next smoke: ${_processCalculations.timeToNext}' );
+        notificationText:
+            'Time to next smoke: ${_processCalculations.timeToNext}');
 
     // Handle callback notifications
     handleCallbackNotifications();
 
-    //print('BEFORE: $calculationMap');
     // Refresh outer handle statuses
     calculationMap['isSmokeTime'] = smokeTime.outerIsNotHandled;
     calculationMap['isWakeUp'] = wakeUpTime.outerIsNotHandled;
     calculationMap['isGoodNight'] = goodNightTime.outerIsNotHandled;
-    //calculationMap['isFinished'] = finishTime.outerIsNotHandled;
-    //print('AFTER: $calculationMap');
-
-    // Send data to the main isolate.
-    _sendPort = sendPort;
-
-    //--------------------------------------------------------------------------
-    _sendPort?.send(_receivePort?.sendPort);
-    //--------------------------------------------------------------------------
 
     // Send some notification data to foreground process
     _sendPort?.send(jsonEncode(calculationMap));
+  }
+
+  // Send 'SendPort' to foreground
+  Future<void> sendReceivePortToBackground(){
+
+    return Future(()async{
+      await Future.delayed(const Duration(milliseconds: 200));
+
+      if (_sendPort == null){
+        print('Callback: _sendPort = null');
+      } else  if (_receivePort == null){
+        print('Callback: _receivePort = null');
+      } else if (_receivePort?.sendPort == null){
+        print('Callback: _receivePort?.sendPort = null');
+      } else {
+        print('Callback: sending _receivePort?.sendPort to foreground');
+        _sendPort?.send(_receivePort?.sendPort);
+      }
+    });
+
   }
 
   //----------------------------  ON DESTROY  ----------------------------------
@@ -153,27 +176,30 @@ class MyTaskHandler extends TaskHandler {
   }
 
   //--------------------  HANDLE CALLBACK NOTIFICATIONS  -----------------------
-  void handleCallbackNotifications(){
+  void handleCallbackNotifications() {
     //----------------------- Is Smoke Time ? -----------------------
     smokeTime.triggerValue = _processCalculations.isSmokeTime;
-    if (smokeTime.innerIsNotHandled){
-      NotificationService().showNotifications(id: 1, title: 'Twinkle', body: 'It\' smoke time.', payload: '');
+    if (smokeTime.innerIsNotHandled) {
+      NotificationService().showNotifications(
+          id: 1, title: 'Twinkle', body: 'It\' smoke time.', payload: '');
       smokeTime.innerHandle();
     }
     //_processCalculations.isSmokeTime = smokeTime.outerIsNotHandled;
 
     //--------------------- Is Wake Up Time ? ----------------------
     wakeUpTime.triggerValue = _processCalculations.isWakeUp;
-    if (wakeUpTime.innerIsNotHandled){
-      NotificationService().showNotifications(id: 2, title: 'Twinkle', body: 'Good morning!', payload: '');
+    if (wakeUpTime.innerIsNotHandled) {
+      NotificationService().showNotifications(
+          id: 2, title: 'Twinkle', body: 'Good morning!', payload: '');
       wakeUpTime.innerHandle();
     }
     //_processCalculations.isWakeUp = wakeUpTime.outerIsNotHandled;
 
     //------------------- Is Good Night Time ? --------------------
     goodNightTime.triggerValue = _processCalculations.isGoodNight;
-    if (goodNightTime.innerIsNotHandled){
-      NotificationService().showNotifications(id: 3, title: 'Twinkle', body: 'Good night!', payload: '');
+    if (goodNightTime.innerIsNotHandled) {
+      NotificationService().showNotifications(
+          id: 3, title: 'Twinkle', body: 'Good night!', payload: '');
       goodNightTime.innerHandle();
     }
     //_processCalculations.isGoodNight = goodNightTime.outerIsNotHandled;
